@@ -2,7 +2,7 @@
 
 [`dev-temp-mail.com`](https://dev-temp-mail.com) 도메인의 [temp-mail.io](https://temp-mail.io) 스타일 서비스 — 학습/포트폴리오용 구현.
 
-🟢 **MVP 운영 중**: <https://app-dev.dev-temp-mail.com>
+[English README](README.en.md) · 🟢 **MVP 운영 중**: <https://app-dev.dev-temp-mail.com>
 
 ---
 

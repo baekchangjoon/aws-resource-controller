@@ -71,6 +71,17 @@ jobs:
         env:
           VITE_API_BASE: https://placeholder.example.com
 
+  docs:
+    name: docs — frontmatter + dead-link lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install pyyaml
+      - run: python scripts/lint_docs.py
+
   terraform:
     name: terraform — fmt + validate
     runs-on: ubuntu-latest

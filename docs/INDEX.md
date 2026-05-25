@@ -2,7 +2,9 @@
 title: 문서 인덱스
 created: 2026-05-25
 updated: 2026-05-25
+phase: meta
 status: living
+reading_order: -1
 ---
 
 # docs/ 인덱스
@@ -59,6 +61,21 @@ session: YYYY-MM-DD     # sessions/ 디렉터리 문서만 사용
 - `living` — 계속 갱신되는 참조 문서. 파일명 그대로 유지.
 - `snapshot` — 특정 시점 기록. 일반적으로 갱신하지 않음 (오자/링크 보정 정도만).
 - `superseded` — 더 이상 유효하지 않음. 본문 상단에 후속 문서로의 링크를 둘 것.
+
+### phase 값
+- `meta` — 본 INDEX처럼 다른 문서를 안내하는 메타 문서
+- `0`~`3` — 해당 Phase 산출물
+- `all` — 여러 Phase에 걸쳐 갱신되는 종합 문서 (예: VERIFICATION, 세션 보고서)
+
+## 자동 검증
+
+[`scripts/lint_docs.py`](../scripts/lint_docs.py)가 CI에서 매 PR/push마다 모든 `docs/*.md`와 `inventory/*.md`의:
+1. frontmatter 필수 필드 (`title`, `created`, `updated`, `status`)
+2. `status: living`인 경우 추가 필드 (`phase`, `reading_order`)
+3. `created`/`updated`가 `YYYY-MM-DD` 포맷
+4. 상대 링크 중 깨진 것
+
+을 점검하고 위반 시 CI 실패시킵니다.
 
 ## 새 세션 추가 방법
 

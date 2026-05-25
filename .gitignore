@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+build/
+dist/
+*.zip
+
+# Node / Vite
+node_modules/
+.pnpm-store/
+web/dist/
+.vite/
+*.tsbuildinfo
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfplan.json
+crash.log
+override.tf
+override.tf.json
+
+# AWS
+.aws-sam/
+
+# Editor
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# Local secrets / env
+.env
+.env.*
+!.env.example
+
+# Test
+coverage/
+.coverage
+htmlcov/
+playwright-report/
+test-results/
+
+# Memory (used by Claude Code agent — not project artifact)
+.remember/

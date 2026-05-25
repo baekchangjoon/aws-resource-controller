@@ -35,10 +35,12 @@ module "ingest_pipeline" {
 module "ses" {
   source = "../../modules/ses"
 
-  name_prefix          = local.name_prefix
-  domain_name          = var.domain_name
-  mail_from_domain     = local.mail_from_fqdn
-  personal_email       = "changjoon.baek@gmail.com"
+  name_prefix      = local.name_prefix
+  domain_name      = var.domain_name
+  mail_from_domain = local.mail_from_fqdn
+  # personal_email is kept outside Terraform to avoid email re-verification.
+  # See docs/DECISIONS.md D4.
+  personal_email       = ""
   mail_bucket_name     = module.ingest_pipeline.mail_bucket_name
   s3_object_key_prefix = "emails/"
   make_rule_set_active = true

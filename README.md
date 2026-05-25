@@ -6,22 +6,28 @@
 
 ## 현재 상태
 
-🚧 **분석/설계 단계 완료, 구현 시작 전.**
+🟢 **Phase 0 (인프라 셋업) 완료. Lambda 구현 단계 진입.**
 
 | 단계 | 상태 |
 |------|------|
 | 인벤토리 수집 | ✅ ([inventory/INVENTORY.md](inventory/INVENTORY.md)) |
-| 분석 문서 | ✅ ([docs/ANALYSIS.md](docs/ANALYSIS.md)) |
-| 설계 문서 | ✅ ([docs/DESIGN.md](docs/DESIGN.md)) |
-| 로드맵 | ✅ ([docs/ROADMAP.md](docs/ROADMAP.md)) |
-| 정리 계획 | ✅ ([docs/TEARDOWN.md](docs/TEARDOWN.md)) |
-| 의사결정 정리 | ✅ ([docs/DECISIONS.md](docs/DECISIONS.md)) — 13개 항목 대기 |
-| 저장소 스캐폴딩 | ⏳ |
-| Terraform 스켈레톤 | ⏳ |
-| Lambda (TDD) | ⏳ |
-| Frontend | ⏳ |
+| 분석/설계/로드맵/정리/결정 문서 | ✅ ([docs/](docs/)) |
+| 저장소 스캐폴딩 + GitHub | ✅ ([repo](https://github.com/baekchangjoon/aws-resource-controller)) |
+| 기존 AWS 리소스 정리 | ✅ |
+| Terraform: 부트스트랩 (state backend) | ✅ |
+| Terraform: ddb 모듈 (TTL) | ✅ |
+| Terraform: ingest_pipeline 모듈 (S3 + DLQ + IAM) | ✅ |
+| Terraform: ses 모듈 (도메인 + DKIM + MAIL FROM + Rule Set) | ✅ |
+| Terraform: route53_records 모듈 | ✅ |
+| Terraform: api 모듈 (HTTP API + Lambda 4종) | ⏳ |
+| Terraform: frontend 모듈 (S3 + CloudFront + ACM) | ⏳ |
+| Lambda Ingest 코드 (TDD) | ⏳ |
+| Lambda API 핸들러 코드 (TDD) | ⏳ |
+| React 프론트엔드 | ⏳ |
 | E2E 테스트 | ⏳ |
-| CI/CD | ⏳ |
+| GitHub Actions CI/CD | ⏳ |
+
+진행 내역은 [`CHANGELOG.md`](CHANGELOG.md) 참고.
 
 ## 빠른 링크
 

@@ -7,15 +7,15 @@ resource "aws_route53_record" "mx_inbound" {
   records = ["10 inbound-smtp.${var.region}.amazonaws.com"]
 }
 
-# DKIM CNAMEs (3 tokens issued by SES)
+# DKIM CNAMEs — SES Easy DKIM always issues exactly 3 tokens
 resource "aws_route53_record" "dkim" {
-  for_each = toset(var.dkim_tokens)
+  count = 3
 
   zone_id = var.hosted_zone_id
-  name    = "${each.value}._domainkey.${var.domain_name}"
+  name    = "${var.dkim_tokens[count.index]}._domainkey.${var.domain_name}"
   type    = "CNAME"
   ttl     = 1800
-  records = ["${each.value}.dkim.amazonses.com"]
+  records = ["${var.dkim_tokens[count.index]}.dkim.amazonses.com"]
 }
 
 # MAIL FROM domain — MX for bounce + SPF TXT

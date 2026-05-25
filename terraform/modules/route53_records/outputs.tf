@@ -3,5 +3,5 @@ output "mx_inbound_fqdn" {
 }
 
 output "dkim_fqdns" {
-  value = [for r in aws_route53_record.dkim : r.fqdn]
+  value = aws_route53_record.dkim[*].fqdn
 }

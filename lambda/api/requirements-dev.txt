@@ -1,4 +1,4 @@
-boto3~=1.35
+boto3~=1.43
 pytest~=8.3
 pytest-cov~=6.0
 moto[s3,dynamodb]~=5.2

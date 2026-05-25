@@ -1,4 +1,4 @@
 # Runtime dependencies (vendored into the Lambda deploy zip).
 # boto3 is provided by the Lambda runtime, so it's not pinned here.
-bleach==6.2.0
-python-ulid==3.0.0
+bleach==6.3.0
+python-ulid==3.1.0

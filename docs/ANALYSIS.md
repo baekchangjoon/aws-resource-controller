@@ -1,3 +1,12 @@
+---
+title: 분석 — TempSES
+created: 2026-05-25
+updated: 2026-05-25
+phase: 0
+status: living
+reading_order: 1
+---
+
 # 분석 — TempSES (dev-temp-mail.com)
 
 작성일: 2026-05-25

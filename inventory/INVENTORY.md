@@ -1,3 +1,12 @@
+---
+title: AWS 리소스 인벤토리 (초기 스냅샷)
+created: 2026-05-25
+updated: 2026-05-25
+phase: 0
+status: snapshot
+reading_order: 0
+---
+
 # AWS 리소스 인벤토리
 
 - **계정**: 322242916220 (alias 없음)

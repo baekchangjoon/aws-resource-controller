@@ -27,16 +27,19 @@
 | E2E 테스트 | ✅ ([VERIFICATION §3a](docs/VERIFICATION.md#phase-3a--e2e-브라우저--백엔드)) |
 | GitHub Actions CI/CD | ✅ ([VERIFICATION §3](docs/VERIFICATION.md#phase-3--cicd-github-actions)) |
 
-진행 내역은 [`CHANGELOG.md`](CHANGELOG.md) 참고. 전체 진행 흐름 + 라이브 검증 결과는 [`docs/PROGRESS.md`](docs/PROGRESS.md).
+진행 내역은 [`CHANGELOG.md`](CHANGELOG.md) 참고. 전체 진행 흐름 + 라이브 검증 결과는 [`docs/sessions/2026-05-25.md`](docs/sessions/2026-05-25.md).
 
 ## 빠른 링크
+
+> 처음 보시는 분은 [`docs/INDEX.md`](docs/INDEX.md)부터 읽으면 순서/타임라인을 한눈에 봅니다.
+
 
 - [분석](docs/ANALYSIS.md) — 현재 인프라 + 기획서 타당성 평가
 - [설계](docs/DESIGN.md) — 아키텍처, DB 스키마, API, 보안 모델
 - [로드맵](docs/ROADMAP.md) — Phase 별 작업, TDD/E2E/CI 전략
 - [정리 계획](docs/TEARDOWN.md) — 삭제·보존·인수할 AWS 리소스
 - [의사결정](docs/DECISIONS.md) — 진행 중 모인 결정 항목
-- [진행 보고서](docs/PROGRESS.md) — 전체 흐름 + 라이브 검증 + 운영 스냅샷
+- [진행 보고서](docs/sessions/2026-05-25.md) — 전체 흐름 + 라이브 검증 + 운영 스냅샷
 - [단계별 검증](docs/VERIFICATION.md) — Phase별 audit 로그
 
 ## 운영 원칙

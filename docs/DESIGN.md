@@ -1,3 +1,12 @@
+---
+title: 설계 — TempSES
+created: 2026-05-25
+updated: 2026-05-25
+phase: 0
+status: living
+reading_order: 2
+---
+
 # 설계 — TempSES
 
 ## 1. 시스템 컨텍스트

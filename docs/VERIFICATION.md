@@ -1,3 +1,12 @@
+---
+title: 단계 검증 로그
+created: 2026-05-25
+updated: 2026-05-25
+phase: all
+status: living
+reading_order: 6
+---
+
 # 단계 검증 (Verification Log)
 
 각 Phase 종료 시 **계획·설계·결정**에 부합하는지 점검한 결과를 기록한다. 다음 Phase는 이 점검을 통과한 뒤 시작한다.

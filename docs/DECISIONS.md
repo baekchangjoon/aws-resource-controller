@@ -1,3 +1,12 @@
+---
+title: 의사결정 — TempSES
+created: 2026-05-25
+updated: 2026-05-25
+phase: 0
+status: living
+reading_order: 4
+---
+
 # 의사결정 — TempSES
 
 진행 중 모인 결정 항목을 한 번에 답변받기 위해 모은다. 답이 정해진 항목부터는 본 문서에 결과를 기록한다.

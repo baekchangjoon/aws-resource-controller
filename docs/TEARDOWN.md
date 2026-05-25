@@ -1,3 +1,12 @@
+---
+title: Teardown — 기존 AWS 리소스 정리
+created: 2026-05-25
+updated: 2026-05-25
+phase: 0
+status: living
+reading_order: 5
+---
+
 # 정리(Teardown) — 기존 AWS 리소스
 
 본 문서는 **Terraform으로 재생성하기 전 삭제할 리소스**와, **유지할 리소스**를 명시한다.

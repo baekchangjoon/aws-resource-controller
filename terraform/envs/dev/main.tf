@@ -9,13 +9,10 @@ data "aws_route53_zone" "primary" {
 
 locals {
   account_id     = data.aws_caller_identity.current.account_id
+  region         = data.aws_region.current.name
   name_prefix    = "tempses-${var.environment}"
   web_fqdn       = "${var.web_subdomain}.${var.domain_name}"
   mail_from_fqdn = "${var.mail_from_subdomain}.${var.domain_name}"
-  common_tags = {
-    Project     = "tempses"
-    Environment = var.environment
-  }
 }
 
 module "ddb" {
@@ -25,9 +22,39 @@ module "ddb" {
   message_ttl_seconds = var.message_ttl_seconds
 }
 
+module "ingest_pipeline" {
+  source = "../../modules/ingest_pipeline"
+
+  name_prefix         = local.name_prefix
+  account_id          = local.account_id
+  region              = local.region
+  addresses_table_arn = module.ddb.addresses_table_arn
+  messages_table_arn  = module.ddb.messages_table_arn
+}
+
+module "ses" {
+  source = "../../modules/ses"
+
+  name_prefix          = local.name_prefix
+  domain_name          = var.domain_name
+  mail_from_domain     = local.mail_from_fqdn
+  personal_email       = "changjoon.baek@gmail.com"
+  mail_bucket_name     = module.ingest_pipeline.mail_bucket_name
+  s3_object_key_prefix = "emails/"
+  make_rule_set_active = true
+}
+
+module "route53_records" {
+  source = "../../modules/route53_records"
+
+  hosted_zone_id     = data.aws_route53_zone.primary.zone_id
+  domain_name        = var.domain_name
+  mail_from_domain   = local.mail_from_fqdn
+  region             = local.region
+  dkim_tokens        = module.ses.dkim_tokens
+  dmarc_report_email = "changjoon.baek@gmail.com"
+}
+
 # Subsequent modules added as they are implemented:
-# module "ses"                { ... }
-# module "ingest_pipeline"    { ... }
-# module "api"                { ... }
-# module "frontend"           { ... }
-# module "route53_records"    { ... }
+# module "api"      { ... }
+# module "frontend" { ... }

@@ -87,6 +87,7 @@ resource "aws_cloudfront_distribution" "web" {
   aliases             = [var.web_fqdn]
   price_class         = var.price_class
   comment             = "${var.name_prefix} web"
+  web_acl_id          = var.web_acl_arn
 
   origin {
     domain_name              = aws_s3_bucket.web.bucket_regional_domain_name

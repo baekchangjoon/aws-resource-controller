@@ -73,6 +73,7 @@ data "aws_iam_policy_document" "deploy" {
       "sqs:*",
       "sts:GetCallerIdentity",
       "tag:GetResources",
+      "wafv2:*",
     ]
     resources = ["*"]
   }

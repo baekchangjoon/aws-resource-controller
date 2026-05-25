@@ -260,6 +260,43 @@ main push 또는 manual dispatch:
 
 ---
 
-## Phase 3b — 운영 강화 (보류)
+## Phase 3b — WAF + API throttling
 
-[ROADMAP §Phase 3](ROADMAP.md#phase-3--운영-안전망-선택)의 WAF, CloudWatch Alarm, SES Production 신청은 [DECISIONS D7/D8](DECISIONS.md#d7-waf-도입-시점)에 따라 학습 우선순위 낮음으로 보류.
+**검증 일시**: 2026-05-25 (저녁 세션)
+**대상**: [`terraform/modules/waf/`](../terraform/modules/waf/), [`terraform/modules/frontend/`](../terraform/modules/frontend/) (CloudFront에 attach), [`terraform/modules/api/`](../terraform/modules/api/) (stage throttle)
+
+### ✅ WAFv2 web ACL (CloudFront scope, us-east-1)
+
+| Priority | Rule | 동작 | 비고 |
+|----------|------|------|------|
+| 1 | AWS Managed `CommonRuleSet` | none override (count→block 룰 그대로) | OWASP 코어 — SQLi/XSS/path traversal 등 |
+| 2 | AWS Managed `KnownBadInputsRuleSet` | none override | 일반 악성 입력 |
+| 3 | `IPRateLimit` (Rate-based, 2000 req/5min per IP) | block | 단일 IP 폭주 차단 |
+
+기본 동작 `Allow`, 모든 룰 visibility/sample 활성. CloudFront에 `web_acl_id` 연결됨.
+
+### ✅ API Gateway HTTP API stage throttling
+
+`aws_apigatewayv2_stage.default.default_route_settings`:
+- `throttling_rate_limit = 50` (RPS)
+- `throttling_burst_limit = 100`
+
+HTTP API v2가 WAFv2 attach를 지원하지 않으므로, stage-level throttle로 보강. IP 분리는 안 되지만 stage 전체 RPS 상한으로 폭주 차단.
+
+### ✅ OIDC 권한 갱신
+
+[`terraform/modules/github_oidc/main.tf`](../terraform/modules/github_oidc/main.tf) allow list에 `wafv2:*` 추가. CD가 새 WAF 리소스를 생성/관리 가능.
+
+### ✅ 배포 검증
+
+CD `terraform apply` 1회 성공 — 1 add(web ACL), 6 change(stage throttle, CloudFront, IAM policy 등) 적용. CloudFront → web ACL 매핑은 CloudFront propagation 후 트래픽에 반영.
+
+### 결론
+
+**Phase 3b 통과** ✅ — [DECISIONS D7](DECISIONS.md#d7-waf-도입-시점)의 "WAF + IP rate limit" 결정이 코드로 실현됨.
+
+---
+
+## Phase 3c — SES Production 신청 (보류 유지)
+
+[DECISIONS D8](DECISIONS.md#d8-ses-production-신청)에 따라 회신 발송 기능 추가 시점까지 보류.

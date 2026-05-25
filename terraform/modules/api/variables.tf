@@ -65,3 +65,15 @@ variable "log_retention_days" {
   type    = number
   default = 7
 }
+
+variable "throttling_rate_limit" {
+  description = "Steady-state requests per second across the whole stage"
+  type        = number
+  default     = 50
+}
+
+variable "throttling_burst_limit" {
+  description = "Short-window burst ceiling across the whole stage"
+  type        = number
+  default     = 100
+}

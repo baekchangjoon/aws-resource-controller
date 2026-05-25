@@ -57,3 +57,7 @@ output "cloudfront_domain_name" {
 output "web_url" {
   value = module.frontend.web_url
 }
+
+output "github_deploy_role_arn" {
+  value = module.github_oidc.deploy_role_arn
+}

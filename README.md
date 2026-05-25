@@ -25,7 +25,7 @@
 | Lambda API 핸들러 코드 (TDD) | ✅ ([VERIFICATION §1.2](docs/VERIFICATION.md#phase-12--lambda-api-핸들러-tdd)) |
 | React 프론트엔드 | ✅ ([VERIFICATION §2](docs/VERIFICATION.md#phase-2--프론트엔드)) — https://app-dev.dev-temp-mail.com |
 | E2E 테스트 | ⏳ |
-| GitHub Actions CI/CD | ⏳ |
+| GitHub Actions CI/CD | ✅ ([VERIFICATION §3](docs/VERIFICATION.md#phase-3--cicd-github-actions)) |
 
 진행 내역은 [`CHANGELOG.md`](CHANGELOG.md) 참고.
 

@@ -1,0 +1,90 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: cd-main
+  cancel-in-progress: false
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-2
+
+jobs:
+  deploy:
+    name: build & deploy to dev
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: web/package-lock.json
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.15.4"
+
+      - name: build lambda/ingest zip
+        working-directory: lambda/ingest
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install --quiet --upgrade pip
+          .venv/bin/pip install --quiet -r requirements-dev.txt
+          PYTHON_BIN=.venv/bin/python ./build.sh
+
+      - name: build lambda/api zip
+        working-directory: lambda/api
+        run: ./build.sh
+
+      - name: terraform apply
+        working-directory: terraform/envs/dev
+        run: |
+          terraform init
+          terraform apply -auto-approve
+
+      - name: build web with live API endpoint
+        working-directory: web
+        env:
+          API_BASE_OUT_DIR: ../terraform/envs/dev
+        run: |
+          npm ci
+          API_BASE=$(terraform -chdir="$API_BASE_OUT_DIR" output -raw api_endpoint)
+          VITE_API_BASE="$API_BASE" npm run build
+
+      - name: sync web to S3 and invalidate CloudFront
+        run: |
+          BUCKET=$(terraform -chdir=terraform/envs/dev output -raw web_bucket_name)
+          DIST_ID=$(terraform -chdir=terraform/envs/dev output -raw cloudfront_distribution_id)
+          aws s3 sync web/dist/ "s3://$BUCKET/" \
+            --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "index.html"
+          aws s3 cp web/dist/index.html "s3://$BUCKET/index.html" \
+            --cache-control "public, max-age=0, must-revalidate" \
+            --content-type "text/html; charset=utf-8"
+          aws cloudfront create-invalidation --distribution-id "$DIST_ID" --paths "/*"
+
+      - name: report
+        run: |
+          URL=$(terraform -chdir=terraform/envs/dev output -raw web_url)
+          echo "Deployed to $URL"

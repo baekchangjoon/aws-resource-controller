@@ -209,6 +209,37 @@ HTML이 즉시 응답, JS/CSS도 정상 로드. CloudFront 기본 도메인(`d3g
 
 ---
 
-## Phase 3 — 운영 안전망 / CI/CD
+## Phase 3 — CI/CD (GitHub Actions)
 
-검증 예정.
+**검증 일시**: 2026-05-25
+**대상**: [`.github/workflows/`](../.github/workflows/), [`terraform/modules/github_oidc/`](../terraform/modules/github_oidc/)
+
+### ✅ AWS OIDC 인증
+- `aws_iam_openid_connect_provider.github` 등록 (audience=`sts.amazonaws.com`)
+- 신뢰 정책 sub: `repo:baekchangjoon/aws-resource-controller:ref:refs/heads/main`, `repo:baekchangjoon/aws-resource-controller:pull_request`
+- 롤 `tempses-dev-github-deploy` 생성, AdministratorAccess(학습용)
+- GitHub repo variable `AWS_DEPLOY_ROLE_ARN` 설정 완료
+
+### ✅ CI 워크플로 ([ci.yml](../.github/workflows/ci.yml))
+PR/main push 시 실행:
+- `ingest`: ruff format/check + mypy + pytest
+- `api`: ruff format/check + mypy + pytest
+- `web`: tsc + vitest + 빌드
+- `terraform`: fmt -check + validate (bootstrap + envs/dev, 더미 zip stub)
+
+### ✅ CD 워크플로 ([cd.yml](../.github/workflows/cd.yml))
+main push 또는 manual dispatch:
+- OIDC 롤 가정
+- Lambda 두 종 빌드
+- `terraform apply -auto-approve`
+- web 빌드 (live API 엔드포인트 주입)
+- S3 sync + CloudFront 무효화
+
+### 결론
+**Phase 3(CI/CD) 통과 예정** — 워크플로 파일 작성 및 OIDC 인프라 완료. 실 동작은 첫 push 후 GitHub Actions 결과로 검증.
+
+---
+
+## Phase 3b — 운영 강화 (보류)
+
+[ROADMAP §Phase 3](ROADMAP.md#phase-3--운영-안전망-선택)의 WAF, CloudWatch Alarm, SES Production 신청은 [DECISIONS D7/D8](DECISIONS.md#d7-waf-도입-시점)에 따라 학습 우선순위 낮음으로 보류.

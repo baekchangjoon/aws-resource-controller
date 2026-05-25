@@ -82,6 +82,13 @@ module "api" {
   ]
 }
 
+module "github_oidc" {
+  source = "../../modules/github_oidc"
+
+  name_prefix = local.name_prefix
+  github_repo = "baekchangjoon/aws-resource-controller"
+}
+
 module "frontend" {
   source = "../../modules/frontend"
   providers = {

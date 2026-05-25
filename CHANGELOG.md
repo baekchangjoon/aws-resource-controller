@@ -4,6 +4,15 @@ All notable changes to TempSES are documented here. Format inspired by [Keep a C
 
 ## [Unreleased]
 
+### 2026-05-25 — Phase 3 진행 (GitHub Actions CI/CD + OIDC)
+
+- [`terraform/modules/github_oidc/`](terraform/modules/github_oidc/) — IAM OIDC provider + deploy role
+  - Trust policy 제한: `repo:baekchangjoon/aws-resource-controller:ref:refs/heads/main` + `pull_request`
+  - 학습용 단일 계정이라 `AdministratorAccess` 부여 (production은 정책 분할 필요)
+- Repo variable `AWS_DEPLOY_ROLE_ARN` 설정 완료
+- [`.github/workflows/ci.yml`](.github/workflows/ci.yml) — PR/push 트리거: ingest/api/web/terraform 4개 잡 병렬
+- [`.github/workflows/cd.yml`](.github/workflows/cd.yml) — main push 트리거: Lambda 빌드 → terraform apply → web 빌드 → S3 sync → CloudFront invalidation
+
 ### 2026-05-25 — Phase 2 완료 (React 프론트엔드 + CloudFront 배포)
 
 - [`web/`](web/) — Vite + React + TypeScript SPA

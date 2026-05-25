@@ -1,0 +1,7 @@
+region              = "ap-northeast-2"
+aws_profile         = "default"
+environment         = "dev"
+domain_name         = "dev-temp-mail.com"
+web_subdomain       = "app-dev"
+mail_from_subdomain = "bounce"
+message_ttl_seconds = 7200

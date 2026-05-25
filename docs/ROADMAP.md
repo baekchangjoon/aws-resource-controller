@@ -79,10 +79,10 @@ Terraform 단위 테스트: [Terratest](https://terratest.gruntwork.io/) 또는 
 
 ## Phase 3 — 운영 안전망 (선택)
 
-- CloudWatch 알람 (Lambda Errors, DLQ depth).
-- AWS Budgets($10/월 알림).
-- WAF: API GW 앞단 (IP rate limit 100req/5min) — 비용 추가($5/월) → D7.
-- SES production access 신청 — 회신 발송 기능 추가 시.
+- CloudWatch 알람 (Lambda Errors, DLQ depth) — ✅ 2026-05-25 도입 ([VERIFICATION Phase 3b 이전 섹션](VERIFICATION.md), [observability 모듈](../terraform/modules/observability/)).
+- AWS Budgets($10/월 알림) — ✅ 위와 동일.
+- WAF: CloudFront(web)에 WAFv2 (CommonRuleSet + KnownBadInputs + IP rate limit 2000 req/5min/IP) + API GW HTTP API v2 stage throttle (50 RPS / burst 100) — ✅ 2026-05-25 도입 ([VERIFICATION Phase 3b](VERIFICATION.md#phase-3b--waf--api-throttling), [DECISIONS D7](DECISIONS.md#d7-waf-도입-시점)). HTTP API v2가 WAFv2 attach를 지원하지 않아 stage throttle로 보강.
+- SES production access 신청 — 회신 발송 기능 추가 시 (보류, [DECISIONS D8](DECISIONS.md#d8-ses-production-신청)).
 
 ## E2E 테스트 전략
 

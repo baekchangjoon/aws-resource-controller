@@ -2,5 +2,5 @@ boto3~=1.43
 pytest~=9.0
 pytest-cov~=7.1
 moto[s3,dynamodb]~=5.2
-ruff~=0.9
+ruff~=0.15
 mypy~=2.1

@@ -57,6 +57,10 @@ jobs:
         working-directory: lambda/api
         run: ./build.sh
 
+      - name: build lambda/budget_killswitch zip
+        working-directory: lambda/budget_killswitch
+        run: ./build.sh
+
       - name: terraform apply
         working-directory: terraform/envs/dev
         run: |

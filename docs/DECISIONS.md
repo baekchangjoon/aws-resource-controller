@@ -86,6 +86,15 @@ Lambda Ingest의 HTML 정제 라이브러리.
 
 → **(b)** 학습 단순화. `pip install -t build/ -r requirements.txt` 한 줄로 패키징 가능. 성능 차이는 메일 수신 트래픽 수준에서 무시 가능. [bleach security advisories](https://github.com/mozilla/bleach/security/advisories) 모니터링 필요.
 
+### D19. 비용 폭주(DDoS / abuse) 방어 깊이
+공개 도메인의 catch-all SES inbound + 무제한 Lambda concurrency + 온디맨드 DDB 조합은 한 번의 abuse로 월 budget을 즉시 넘길 수 있음. WAF + API throttle만으로는 SES 경로가 비어 있음.
+
+- (a) **다층 방어 모두 적용 (선택)** — Lambda reserved concurrency + AWS Cost Anomaly Detection + SES inbound 폭주 알람 + Budget 100% 도달 시 SES Rule Set 자동 비활성화 (kill switch Lambda)
+- (b) Budget 알람만 유지하고 수동 대응 (현재 상태)
+- (c) WAF rate limit을 더 엄격하게 (100 req/5min/IP) — 정상 사용자 영향 큼
+
+→ **(a)** 채택. 자세한 내용은 [VERIFICATION Phase 3c](VERIFICATION.md#phase-3c--비용-폭주-방어).
+
 ---
 
 ## 미해결

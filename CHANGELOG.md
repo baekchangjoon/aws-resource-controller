@@ -4,6 +4,32 @@ All notable changes to TempSES are documented here. Format inspired by [Keep a C
 
 ## [Unreleased]
 
+### 2026-05-25 — 비용 폭주 방어 (D19)
+
+[DECISIONS D19](docs/DECISIONS.md#d19-비용-폭주ddos--abuse-방어-깊이)의 채택안 (a) "다층 방어 모두 적용"을 코드로 실현. WAF + API throttle이 막지 못하는 **SES inbound abuse + Lambda concurrency 폭주** 경로에 대한 보호.
+
+1. **Lambda reserved concurrency**
+   - `tempses-dev-ingest`: 동시 10
+   - `tempses-dev-api`: 동시 20
+   - 폭주 시 함수 비용 + 하류 DDB 트래픽 상한 보장.
+
+2. **AWS Cost Anomaly Detection** — `aws_ce_anomaly_monitor` + `aws_ce_anomaly_subscription`
+   - DIMENSIONAL on SERVICE, threshold `ANOMALY_TOTAL_IMPACT_ABSOLUTE >= $5`, frequency IMMEDIATE, 이메일 알림.
+   - ML 기반 비정상 spike 감지 → fixed-threshold budget이 놓치는 sudden cost spike도 잡음.
+
+3. **SES inbound flood 조기 경보** — [`observability` 모듈](terraform/modules/observability/)의 `ingest_invocations_spike` 알람
+   - `AWS/Lambda` `Invocations` (Sum) on ingest 함수, 5분 200건 초과 시 SNS → 이메일.
+
+4. **Budget kill-switch** — Budget 100% 도달 시 SES Rule Set 자동 비활성화
+   - 새 SNS topic `tempses-dev-budget-breach` (policy로 `budgets.amazonaws.com` publish 허용).
+   - AWS Budgets `tempses-dev-monthly`에 100% ACTUAL 알림 추가, subscriber로 위 topic 포함.
+   - Lambda [`lambda/budget_killswitch/`](lambda/budget_killswitch/) — SNS 수신 시 `ses.set_active_receipt_rule_set()` 호출로 active rule set 제거. inbound mail 전체 중단.
+   - 복구: `aws ses set-active-receipt-rule-set --rule-set-name tempses-dev-rules`.
+
+5. **OIDC 권한** — github_oidc allow list에 `ce:*` 추가 (Cost Anomaly Detection 관리).
+6. **CD 빌드** — `cd.yml`에 killswitch Lambda zip 빌드 step 추가.
+7. **문서** — [DECISIONS D19](docs/DECISIONS.md#d19-비용-폭주ddos--abuse-방어-깊이) 신규, [VERIFICATION Phase 3c](docs/VERIFICATION.md#phase-3c--비용-폭주-방어) 신규.
+
 ### 2026-05-25 — WAF + API throttling (D7 보류 해제)
 
 [DECISIONS D7](docs/DECISIONS.md#d7-waf-도입-시점)에 보류로 잠겨있던 "WAF + IP rate limit"을 코드로 실현.

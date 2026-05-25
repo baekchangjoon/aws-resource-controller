@@ -61,3 +61,9 @@ variable "log_retention_days" {
   type        = number
   default     = 7
 }
+
+variable "reserved_concurrency" {
+  description = "Hard cap on concurrent ingest Lambda executions. Bounds Lambda + downstream DDB spend during an SES inbound flood."
+  type        = number
+  default     = 10
+}

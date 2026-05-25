@@ -42,3 +42,20 @@ variable "lambda_error_threshold" {
   type        = number
   default     = 1
 }
+
+variable "ingest_invocations_spike_threshold" {
+  description = "Ingest Lambda invocations per 5-minute window before warning of an SES inbound flood"
+  type        = number
+  default     = 200
+}
+
+variable "cost_anomaly_total_impact_usd" {
+  description = "Minimum anomaly amount (absolute USD) before Cost Anomaly Detection notifies"
+  type        = number
+  default     = 5
+}
+
+variable "killswitch_lambda_zip_path" {
+  description = "Path to the built SES killswitch Lambda deploy zip"
+  type        = string
+}

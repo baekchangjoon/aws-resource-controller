@@ -75,15 +75,16 @@ resource "aws_cloudwatch_log_group" "api" {
 }
 
 resource "aws_lambda_function" "api" {
-  function_name    = "${var.name_prefix}-api"
-  role             = aws_iam_role.api_lambda.arn
-  handler          = "handler.lambda_handler"
-  runtime          = "python3.13"
-  architectures    = ["x86_64"]
-  timeout          = 10
-  memory_size      = 256
-  filename         = var.lambda_zip_path
-  source_code_hash = filebase64sha256(var.lambda_zip_path)
+  function_name                  = "${var.name_prefix}-api"
+  role                           = aws_iam_role.api_lambda.arn
+  handler                        = "handler.lambda_handler"
+  runtime                        = "python3.13"
+  architectures                  = ["x86_64"]
+  timeout                        = 10
+  memory_size                    = 256
+  reserved_concurrent_executions = var.reserved_concurrency
+  filename                       = var.lambda_zip_path
+  source_code_hash               = filebase64sha256(var.lambda_zip_path)
 
   environment {
     variables = {

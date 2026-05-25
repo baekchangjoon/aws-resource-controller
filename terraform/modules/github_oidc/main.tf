@@ -60,6 +60,7 @@ data "aws_iam_policy_document" "deploy" {
       "acm:*",
       "apigateway:*",
       "budgets:*",
+      "ce:*",
       "cloudfront:*",
       "cloudwatch:*",
       "dynamodb:*",

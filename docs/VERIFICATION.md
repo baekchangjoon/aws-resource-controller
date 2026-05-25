@@ -297,6 +297,62 @@ CD `terraform apply` 1회 성공 — 1 add(web ACL), 6 change(stage throttle, Cl
 
 ---
 
-## Phase 3c — SES Production 신청 (보류 유지)
+## Phase 3c — 비용 폭주 방어
+
+**검증 일시**: 2026-05-25
+**대상**: [`terraform/modules/ingest_pipeline/`](../terraform/modules/ingest_pipeline/), [`terraform/modules/api/`](../terraform/modules/api/), [`terraform/modules/observability/`](../terraform/modules/observability/), [`lambda/budget_killswitch/`](../lambda/budget_killswitch/)
+
+### ✅ Lambda reserved concurrency
+
+| 함수 | 동시 실행 cap | 보호 효과 |
+|------|--------------|-----------|
+| ingest | 10 | SES inbound flood 시 Lambda 비용 + 하류 DDB 트래픽 상한 보장 |
+| api | 20 | HTTP API stage throttle를 우회하더라도 함수 동시 실행 상한 |
+
+### ✅ AWS Cost Anomaly Detection
+
+- `aws_ce_anomaly_monitor` — `DIMENSIONAL` on `SERVICE`.
+- `aws_ce_anomaly_subscription` — `FREQUENCY=IMMEDIATE`, threshold `ANOMALY_TOTAL_IMPACT_ABSOLUTE >= $5`, subscriber: 이메일.
+- ML이 평소 패턴 대비 비정상적 spike를 자동 감지. fixed-threshold budget이 못 잡는 sudden cost spike(예: 신규 서비스 misconfig)도 catch.
+
+### ✅ SES inbound flood 조기 경보
+
+`aws_cloudwatch_metric_alarm.ingest_invocations_spike`:
+- `AWS/Lambda` `Invocations` (Sum) on `tempses-dev-ingest`
+- threshold **200 / 5min**
+- alarm action → `tempses-dev-alerts` SNS → 이메일
+
+정상 트래픽이 거의 0이므로 이 알람이 발화하면 SES catch-all로 누가 무작위 발송하는 신호.
+
+### ✅ Budget kill-switch (SES Rule Set 자동 비활성화)
+
+- 새 SNS topic `tempses-dev-budget-breach`. topic policy로 `budgets.amazonaws.com` principal에게 `sns:Publish` 허용.
+- AWS Budgets `tempses-dev-monthly`에 신규 notification (100% ACTUAL, threshold_type=PERCENTAGE)이 위 SNS topic을 subscriber로 가짐.
+- SNS topic 구독자: `tempses-dev-budget-killswitch` Lambda. 권한: `ses:SetActiveReceiptRuleSet` + CloudWatch Logs.
+- Lambda 동작: SNS 메시지 받으면 `ses.set_active_receipt_rule_set()` 호출 (RuleSetName 비움) → SES 수신 전체 중단.
+- 복구: 사용자가 콘솔 또는 `aws ses set-active-receipt-rule-set --rule-set-name tempses-dev-rules`로 재활성화.
+
+### ✅ OIDC 권한 갱신
+
+[`terraform/modules/github_oidc/main.tf`](../terraform/modules/github_oidc/main.tf) allow list에 `ce:*` 추가 (Cost Anomaly Detection 리소스 관리).
+
+### 비용 영향
+
+- WAF 룰 3개 + 요청 처리: 약 **+$8/월**
+- WAFv2 web ACL: $5/월 + rule $1×3 = $8 + 요청 비용 $0.60/1M
+- Cost Anomaly Detection / Budget Action: **무료**
+- Lambda killswitch: invocation 거의 0 (실제 발화 시에만) → **무료 수준**
+- Lambda reserved concurrency: **무료** (개념적 cap만)
+- Throttle / Alarm: 기존 인프라 내에서 처리, **0**
+
+총 추가 비용: 약 **$8/월** (Phase 3b의 WAF 비용을 포함).
+
+### 결론
+
+**Phase 3c 통과** ✅ — abuse / DDoS / catch-all 폭주 시 자동 비용 차단까지 갖춤. [DECISIONS D19](DECISIONS.md#d19-비용-폭주ddos--abuse-방어-깊이) 채택안 (a)를 그대로 실현.
+
+---
+
+## Phase 3d — SES Production 신청 (보류 유지)
 
 [DECISIONS D8](DECISIONS.md#d8-ses-production-신청)에 따라 회신 발송 기능 추가 시점까지 보류.

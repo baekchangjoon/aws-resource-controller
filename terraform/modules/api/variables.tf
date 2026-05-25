@@ -77,3 +77,9 @@ variable "throttling_burst_limit" {
   type        = number
   default     = 100
 }
+
+variable "reserved_concurrency" {
+  description = "Hard cap on concurrent API Lambda executions. Defends against runaway traffic that bypasses the stage throttle."
+  type        = number
+  default     = 20
+}

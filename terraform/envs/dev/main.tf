@@ -99,6 +99,7 @@ module "observability" {
   dlq_name                    = module.ingest_pipeline.dlq_name
   api_gateway_id              = module.api.api_id
   monthly_budget_usd          = 10
+  killswitch_lambda_zip_path  = "${path.root}/../../../lambda/budget_killswitch/dist/handler.zip"
 }
 
 module "waf" {

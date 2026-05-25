@@ -4,6 +4,30 @@ All notable changes to TempSES are documented here. Format inspired by [Keep a C
 
 ## [Unreleased]
 
+### 2026-05-25 — 운영 안전망 강화 (5단계 추천 우선순위 완료)
+
+추천 우선순위([§ 보류 항목 분석](docs/sessions/2026-05-25.md#6-의도적-보류--향후-작업)) 1~5번 일괄 완료.
+
+1. **Dependabot 활성화** — [`.github/dependabot.yml`](.github/dependabot.yml)
+   - 매주 월요일 01:00 KST에 github-actions / pip(ingest, api, e2e) / npm(web) / terraform(bootstrap, envs/dev) 갱신 PR
+   - 그룹 정책으로 관련 업데이트 묶기 → 첫 실행에서 16개 PR 생성됨
+
+2. **Node 24 마이그레이션** — 4개 워크플로 모두에 `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"` 추가
+   - 2026-06-02 default 변경 전 안전 전환
+
+3. **CloudWatch Alarms + AWS Budgets** — [`terraform/modules/observability/`](terraform/modules/observability/)
+   - Lambda Errors (ingest/api), DLQ depth, API 5xx 4종 알람
+   - Budget $10/월, 50%/80%/100% 알림
+   - SNS topic `tempses-dev-alerts` → 이메일 구독 (사용자가 confirmation 클릭 필요)
+
+4. **docs lint CI** — [`scripts/lint_docs.py`](scripts/lint_docs.py) + ci.yml `docs` 잡
+   - frontmatter 필수 필드 검증 (`title/created/updated/status`)
+   - 살아있는 문서는 `phase/reading_order` 추가 필요
+   - 상대 링크 dead-link / 리포지토리 escape 검증
+   - 첫 실행이 `~/Downloads/aws_ses.html` dead-link를 잡아 ANALYSIS.md 수정
+
+5. **README 영문판** — [`README.en.md`](README.en.md), Korean 본판과 상호 링크
+
 ### 2026-05-25 — gitleaks 시크릿 스캔 워크플로 추가
 
 - [`.github/workflows/security.yml`](.github/workflows/security.yml): PR / main push / 주간 cron / 수동 dispatch

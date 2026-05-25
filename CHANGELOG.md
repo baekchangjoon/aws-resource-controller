@@ -4,6 +4,22 @@ All notable changes to TempSES are documented here. Format inspired by [Keep a C
 
 ## [Unreleased]
 
+### 2026-05-25 — Phase 2 완료 (React 프론트엔드 + CloudFront 배포)
+
+- [`web/`](web/) — Vite + React + TypeScript SPA
+  - 마운트 시 자동 주소 발급, 5초 polling으로 인박스 갱신
+  - 메일 본문은 `sandbox=""` iframe + CSP + `referrerpolicy=no-referrer` 격리 렌더
+  - 인박스 페이지네이션 (커서 기반)
+  - 5개 Vitest 단위 테스트 모두 PASS
+- [`terraform/modules/frontend/`](terraform/modules/frontend/)
+  - ACM 인증서 (us-east-1, DNS 검증)
+  - Private S3 `tempses-dev-web-322242916220` + CloudFront OAC
+  - CloudFront `E36YDK2L5SPTL7` + SPA fallback (403/404 → index.html)
+  - Route53 A/ALIAS `app-dev.dev-temp-mail.com`
+- API 모듈 CORS에 `https://app-dev.dev-temp-mail.com` 추가
+- [`web/deploy.sh`](web/deploy.sh): vite build → S3 sync → CloudFront 무효화
+- **검증**: https://app-dev.dev-temp-mail.com → 200
+
 ### 2026-05-25 — Phase 1.2 완료 (Lambda API + HTTP API Gateway + E2E)
 
 - [`lambda/api/src/handler.py`](lambda/api/src/handler.py) — Python 3.13 단일 Lambda + routeKey 라우터 ([D18](docs/DECISIONS.md#d18))

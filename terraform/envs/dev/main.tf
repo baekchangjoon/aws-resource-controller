@@ -76,9 +76,21 @@ module "api" {
   mail_bucket_arn      = module.ingest_pipeline.mail_bucket_arn
   mail_bucket_name     = module.ingest_pipeline.mail_bucket_name
   address_ttl_seconds  = var.message_ttl_seconds
-  # Phase 1: CORS allows only local dev. Phase 2 adds CloudFront domain.
-  cors_origins = ["http://localhost:5173"]
+  cors_origins = [
+    "http://localhost:5173",
+    "https://${local.web_fqdn}",
+  ]
 }
 
-# Subsequent modules added as they are implemented:
-# module "frontend" { ... }
+module "frontend" {
+  source = "../../modules/frontend"
+  providers = {
+    aws.us_east_1 = aws.us_east_1
+  }
+
+  name_prefix    = local.name_prefix
+  account_id     = local.account_id
+  domain_name    = var.domain_name
+  web_fqdn       = local.web_fqdn
+  hosted_zone_id = data.aws_route53_zone.primary.zone_id
+}

@@ -1,0 +1,121 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --fg: #0f172a;
+  --muted: #64748b;
+  --accent: #FF9900;
+  --border: #e2e8f0;
+  --selected: #fef3c7;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.hero {
+  text-align: center;
+  padding: 1rem 0 2rem;
+}
+.hero h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  letter-spacing: -0.02em;
+}
+.muted { color: var(--muted); }
+.small { font-size: 0.85rem; }
+
+.addr-bar {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+  background: #0f172a;
+  color: white;
+  padding: 1rem;
+  border-radius: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+.addr {
+  background: rgba(255,255,255,0.08);
+  color: #6ee7b7;
+  padding: 0.4rem 0.7rem;
+  border-radius: 0.4rem;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.95rem;
+  flex: 1 1 auto;
+  user-select: all;
+}
+.btn-primary, .btn-secondary {
+  border: 0;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 0.4rem;
+  font-weight: 600;
+}
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-secondary { background: rgba(255,255,255,0.12); color: white; }
+.btn-secondary:hover { background: rgba(255,255,255,0.2); }
+
+.error {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 2fr;
+  gap: 1rem;
+  min-height: 60vh;
+}
+@media (max-width: 720px) {
+  .layout { grid-template-columns: 1fr; }
+}
+
+.inbox, .view {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  padding: 1rem;
+}
+.inbox h2, .view h3 { margin-top: 0; }
+.inbox ul { list-style: none; padding: 0; margin: 0; }
+.inbox li {
+  padding: 0.6rem;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.inbox li:hover { background: #f1f5f9; }
+.inbox li.selected { background: var(--selected); }
+.inbox .from { font-weight: 600; }
+.inbox .subject { font-size: 0.95rem; }
+
+.msg iframe {
+  width: 100%;
+  height: 50vh;
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  background: white;
+}
+.msg footer {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+.msg footer ul { list-style: none; padding: 0; }
+.msg footer li { padding: 0.3rem 0; }

@@ -160,7 +160,52 @@ DESIGN.md §5의 4개 Lambda 분할을 **단일 Lambda + routeKey 라우터**로
 
 ## Phase 2 — 프론트엔드
 
-검증 예정.
+**검증 일시**: 2026-05-25
+**대상**: [`web/`](../web/), [`terraform/modules/frontend/`](../terraform/modules/frontend/)
+
+### ✅ React 단위 테스트 (Vitest + Testing Library)
+
+| 테스트 | 결과 |
+|--------|------|
+| 마운트 시 자동 주소 발급 | PASS |
+| 5초 폴링으로 신규 메일 append + 커서 전달 | PASS |
+| 메일 본문 iframe 렌더 — `sandbox=""`, `referrerpolicy=no-referrer`, CSP 메타 포함 | PASS |
+| "새 주소" 버튼이 인박스 클리어 + 새 주소 발급 | PASS |
+| "복사" 버튼이 navigator.clipboard.writeText 호출 | PASS |
+
+품질 게이트: `tsc --noEmit` 통과, `vitest` 5/5 PASS.
+
+### ✅ 빌드 산출물
+- `vite build` 결과: 467B `index.html` + 148kB JS + 2kB CSS (gzip 48kB)
+- `VITE_API_BASE` env로 API 엔드포인트 주입
+
+### ✅ Terraform `frontend` 모듈
+
+| 자원 | 검증 |
+|------|------|
+| ACM 인증서 (us-east-1, DNS validated) | `aws_acm_certificate_validation.cf` 완료 |
+| Private S3 web 버킷 + PAB + SSE-S3 | `tempses-dev-web-322242916220` |
+| CloudFront OAC | `aws_cloudfront_origin_access_control.web` |
+| CloudFront distribution | `E36YDK2L5SPTL7`, alias=`app-dev.dev-temp-mail.com`, TLSv1.2_2021, redirect-to-HTTPS |
+| Managed CachingOptimized 정책 | `658327ea-f89d-4fab-a63d-7e88639e58f6` |
+| SPA fallback | 403/404 → `/index.html` 200 |
+| S3 bucket policy (OAC only) | `aws_s3_bucket_policy.web` |
+| Route53 A/ALIAS | `app-dev.dev-temp-mail.com` → CloudFront |
+
+### ✅ API CORS 업데이트
+[`envs/dev/main.tf`](../terraform/envs/dev/main.tf) `module "api"`의 `cors_origins`에 `https://app-dev.dev-temp-mail.com` 추가 적용 완료.
+
+### ✅ 배포 검증
+
+```
+$ curl -sS -o /dev/null -w "%{http_code}" https://app-dev.dev-temp-mail.com/
+200
+```
+HTML이 즉시 응답, JS/CSS도 정상 로드. CloudFront 기본 도메인(`d3gxg81w3nlolu.cloudfront.net`)도 200.
+
+### 결론
+
+**Phase 2 통과** ✅ — 프론트엔드가 배포되어 사용자가 https://app-dev.dev-temp-mail.com/ 에서 서비스를 이용 가능. (사용자 인터랙션 전체 시나리오는 브라우저 수동 검증 또는 Phase 3에서 Playwright로 자동화 예정.)
 
 ---
 

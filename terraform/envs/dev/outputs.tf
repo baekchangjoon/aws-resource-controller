@@ -42,4 +42,18 @@ output "api_lambda_function_name" {
   value = module.api.api_lambda_function_name
 }
 
-# cloudfront_domain 등은 해당 모듈 구현 후 추가
+output "web_bucket_name" {
+  value = module.frontend.web_bucket_name
+}
+
+output "cloudfront_distribution_id" {
+  value = module.frontend.cloudfront_distribution_id
+}
+
+output "cloudfront_domain_name" {
+  value = module.frontend.cloudfront_domain_name
+}
+
+output "web_url" {
+  value = module.frontend.web_url
+}

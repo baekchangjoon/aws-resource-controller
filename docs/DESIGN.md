@@ -100,8 +100,9 @@
 
 ## 4. S3 버킷
 
-### 4.1 `tempses-mail-{account_id}-{region}`
+### 4.1 `{name_prefix}-mail-{account_id}` (예: `tempses-dev-mail-322242916220`)
 - 용도: SES 메일 원문 + 첨부파일
+- 이름 패턴 사유: stage prefix(`tempses-dev-`)로 환경 분리, account id로 전역 유일성. region은 ARN/리소스에 이미 포함되어 중복 제거.
 - 구조:
   - `emails/<receipt_id>` — SES가 putObject (key는 SES가 결정)
   - `attachments/<message_ulid>/<aid>/<filename>` — Lambda Ingest가 putObject
@@ -185,8 +186,8 @@ Response 200:
 - 미등록 수신 주소 drop → catch-all abuse 방어.
 
 ### 7.2 본문 처리
-- HTML: [nh3](https://pypi.org/project/nh3/)으로 default whitelist + `style/script/object/iframe/embed/link` 제거, `on*` 속성 차단.
-- 외부 리소스: `body_html_safe`에서 `<img>` `src` 속성을 제거하거나 `data:` 외 모두 차단 (추적 픽셀 방어). 옵션은 D3.
+- HTML: [bleach](https://bleach.readthedocs.io/) (순수 Python)으로 default whitelist + `style/script/object/iframe/embed/link` 제거, `on*` 속성 차단. (`nh3`는 더 빠르지만 Rust 확장이라 Lambda 배포에 Docker 빌드 필요 — 학습 단순화를 위해 bleach 선택. [DECISIONS D17](DECISIONS.md#d17-html-sanitize-라이브러리))
+- 외부 리소스: `body_html_safe`에서 `<img>` `src` 속성 모두 제거 (추적 픽셀 방어, [DECISIONS D3](DECISIONS.md#d3-외부-이미지리소스-정책)).
 
 ### 7.3 출력 단계 (브라우저 렌더)
 - 본문은 iframe에 `sandbox="allow-same-origin"`만 허용 (script/forms/popups 모두 차단).

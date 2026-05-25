@@ -62,6 +62,14 @@
 
 → (a)로 진행.
 
+### D17. HTML sanitize 라이브러리
+Lambda Ingest의 HTML 정제 라이브러리.
+- (a) `nh3` (Rust 기반 ammonia 바인딩) — 빠르고 활발히 유지되지만 Lambda 배포에 Docker 빌드 필요
+- (b) **`bleach` (순수 Python)** — 약간 느리고 유지보수 페이스 느림. zip 빌드만으로 충분
+- (c) 자체 구현 (html.parser + 화이트리스트)
+
+→ **(b)** 학습 단순화. `pip install -t build/ -r requirements.txt` 한 줄로 패키징 가능. 성능 차이는 메일 수신 트래픽 수준에서 무시 가능. [bleach security advisories](https://github.com/mozilla/bleach/security/advisories) 모니터링 필요.
+
 ---
 
 ## 미해결

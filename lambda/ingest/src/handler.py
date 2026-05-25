@@ -26,7 +26,7 @@ import time
 from email.message import Message
 from typing import Any
 
-import bleach  # type: ignore[import-untyped]
+import bleach
 import boto3
 from botocore.exceptions import ClientError
 

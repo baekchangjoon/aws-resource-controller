@@ -4,6 +4,14 @@ All notable changes to TempSES are documented here. Format inspired by [Keep a C
 
 ## [Unreleased]
 
+### 2026-05-25 — gitleaks 시크릿 스캔 워크플로 추가
+
+- [`.github/workflows/security.yml`](.github/workflows/security.yml): PR / main push / 주간 cron / 수동 dispatch
+  - [`gitleaks/gitleaks-action@v2`](https://github.com/gitleaks/gitleaks-action) (public repo는 라이선스 불필요)
+  - 전체 히스토리 스캔 (`fetch-depth: 0`), PR에 leak 발견 시 자동 코멘트
+- 로컬 사전 검증: `gitleaks v8.30.1` — 16 commits, **no leaks** ✅
+- 첫 실행 (Run #26385235053): success
+
 ### 2026-05-25 — E2E 워크플로 + Playwright MCP 라이브 검증
 
 - [`.github/workflows/e2e.yml`](.github/workflows/e2e.yml): workflow_dispatch / PR label `run-e2e` / nightly 16:00 UTC

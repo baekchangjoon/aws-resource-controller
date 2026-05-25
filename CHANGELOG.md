@@ -4,6 +4,19 @@ All notable changes to TempSES are documented here. Format inspired by [Keep a C
 
 ## [Unreleased]
 
+### 2026-05-25 — Phase 3a 완료 (Playwright 브라우저 E2E)
+
+- [`tests/e2e/test_browser_full_journey.py`](tests/e2e/test_browser_full_journey.py): 헤드리스 Chromium으로 사용자 전체 시나리오 검증
+  - `https://app-dev.dev-temp-mail.com` 접속 → 자동 주소 발급
+  - SES 실제 발송 → 5초 폴링이 인박스 업데이트
+  - iframe sandbox/referrerpolicy 검증 + 본문 텍스트 확인
+- 실행 결과: 10초 이내 PASS
+
+### 2026-05-25 — Phase 3 완료 (GitHub Actions CI/CD + OIDC)
+
+- CI Run #26381616695 SUCCESS, CD Run #26381616696 SUCCESS
+- `terraform apply` → Lambda 빌드 → web 빌드 → S3 sync → CloudFront 무효화 자동화 완료
+
 ### 2026-05-25 — Phase 3 진행 (GitHub Actions CI/CD + OIDC)
 
 - [`terraform/modules/github_oidc/`](terraform/modules/github_oidc/) — IAM OIDC provider + deploy role

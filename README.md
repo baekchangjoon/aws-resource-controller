@@ -6,7 +6,7 @@
 
 ## 현재 상태
 
-🟢 **Phase 0 (인프라 셋업) 완료. Lambda 구현 단계 진입.**
+🟢 **MVP 전체 완료** — https://app-dev.dev-temp-mail.com 에서 동작 가능.
 
 | 단계 | 상태 |
 |------|------|
@@ -24,7 +24,7 @@
 | Lambda Ingest 코드 (TDD) | ✅ ([VERIFICATION §1.1](docs/VERIFICATION.md#phase-11--lambda-ingest-tdd)) |
 | Lambda API 핸들러 코드 (TDD) | ✅ ([VERIFICATION §1.2](docs/VERIFICATION.md#phase-12--lambda-api-핸들러-tdd)) |
 | React 프론트엔드 | ✅ ([VERIFICATION §2](docs/VERIFICATION.md#phase-2--프론트엔드)) — https://app-dev.dev-temp-mail.com |
-| E2E 테스트 | ⏳ |
+| E2E 테스트 | ✅ ([VERIFICATION §3a](docs/VERIFICATION.md#phase-3a--e2e-브라우저--백엔드)) |
 | GitHub Actions CI/CD | ✅ ([VERIFICATION §3](docs/VERIFICATION.md#phase-3--cicd-github-actions)) |
 
 진행 내역은 [`CHANGELOG.md`](CHANGELOG.md) 참고.

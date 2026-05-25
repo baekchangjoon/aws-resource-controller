@@ -235,8 +235,19 @@ main push 또는 manual dispatch:
 - web 빌드 (live API 엔드포인트 주입)
 - S3 sync + CloudFront 무효화
 
+### ✅ 실제 실행 결과 (2026-05-25)
+
+| Run | 워크플로 | 결과 |
+|-----|----------|------|
+| 26381616695 | CI | success (4잡 모두 통과) |
+| 26381616696 | CD | success — terraform apply + Lambda 빌드 + S3 sync + CloudFront 무효화 |
+
+배포 후 확인:
+- `GET https://app-dev.dev-temp-mail.com/` → HTTP 200
+- `POST {api}/addresses` → HTTP 201, 새 주소 발급
+
 ### 결론
-**Phase 3(CI/CD) 통과 예정** — 워크플로 파일 작성 및 OIDC 인프라 완료. 실 동작은 첫 push 후 GitHub Actions 결과로 검증.
+**Phase 3(CI/CD) 통과** ✅ — PR/main push 시 자동 빌드/검증/배포가 동작.
 
 ---
 

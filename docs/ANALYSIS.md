@@ -103,7 +103,7 @@ reading_order: 1
 | HTTP API + Lambda 4개 핸들러 | ❌ | 신규 |
 | React 정적 SPA | ❌ | 신규 |
 | CloudFront + S3 호스팅 | ❌ | 신규 |
-| WAF/Rate Limit | ❌ | Phase 3 |
+| WAF/Rate Limit | ✅ | Phase 3b 완료 — CloudFront WAFv2 + API GW HTTP API stage throttle |
 | CloudWatch 알람 | ❌ | Phase 3 |
 | Terraform IaC | ❌ | 전체 코드화 |
 | TDD/E2E 테스트 | ❌ | 신규 |

@@ -75,7 +75,9 @@ updates:
         applies-to: version-updates
         dependency-type: development
 
-  # Terraform — bootstrap
+  # Terraform — bootstrap. AWS provider major bumps require coordinated
+  # updates across every sub-module, so we only let Dependabot send minor /
+  # patch updates here. Major upgrades land via hand-rolled migration PRs.
   - package-ecosystem: terraform
     directory: /terraform/bootstrap
     schedule:
@@ -84,8 +86,11 @@ updates:
       time: "01:00"
       timezone: Asia/Seoul
     open-pull-requests-limit: 3
+    ignore:
+      - dependency-name: "hashicorp/aws"
+        update-types: ["version-update:semver-major"]
 
-  # Terraform — envs/dev
+  # Terraform — envs/dev (same caveat as bootstrap re: AWS provider majors)
   - package-ecosystem: terraform
     directory: /terraform/envs/dev
     schedule:
@@ -94,3 +99,6 @@ updates:
       time: "01:00"
       timezone: Asia/Seoul
     open-pull-requests-limit: 3
+    ignore:
+      - dependency-name: "hashicorp/aws"
+        update-types: ["version-update:semver-major"]

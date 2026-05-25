@@ -54,3 +54,6 @@ test-results/
 
 # Memory (used by Claude Code agent — not project artifact)
 .remember/
+
+# Playwright MCP scratch snapshots
+.playwright-mcp/

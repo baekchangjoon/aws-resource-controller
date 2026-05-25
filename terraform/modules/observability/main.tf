@@ -191,9 +191,13 @@ resource "aws_ce_anomaly_monitor" "service" {
 
 resource "aws_ce_anomaly_subscription" "service" {
   name             = "${var.name_prefix}-anomaly-service"
-  frequency        = "IMMEDIATE"
+  frequency        = "DAILY"
   monitor_arn_list = [aws_ce_anomaly_monitor.service.arn]
 
+  # AWS constraint: IMMEDIATE frequency only supports SNS subscribers.
+  # DAILY+EMAIL keeps the operator-friendly inbox notification path and is
+  # plenty responsive for cost spikes — the budget 100% killswitch covers
+  # the hard cutoff case in real time.
   subscriber {
     type    = "EMAIL"
     address = var.notification_email

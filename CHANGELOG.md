@@ -4,6 +4,20 @@ All notable changes to TempSES are documented here. Format inspired by [Keep a C
 
 ## [Unreleased]
 
+### 2026-05-25 — WAF + API throttling (D7 보류 해제)
+
+[DECISIONS D7](docs/DECISIONS.md#d7-waf-도입-시점)에 보류로 잠겨있던 "WAF + IP rate limit"을 코드로 실현.
+
+- **새 모듈** [`terraform/modules/waf/`](terraform/modules/waf/) — CloudFront-scope (`us-east-1`) WAFv2 web ACL.
+  - Priority 1: AWS Managed `CommonRuleSet` (OWASP — SQLi/XSS/path traversal).
+  - Priority 2: AWS Managed `KnownBadInputsRuleSet`.
+  - Priority 3: IP rate-based block — **2000 req / 5min / source IP** (override 가능, `var.rate_limit`).
+  - Default: Allow. 모든 룰 CloudWatch metrics + sample 활성.
+- **CloudFront attach** — [`terraform/modules/frontend/`](terraform/modules/frontend/)에 `web_acl_arn` 변수 추가, `aws_cloudfront_distribution.web.web_acl_id`로 연결.
+- **API Gateway HTTP API stage throttling** — `aws_apigatewayv2_stage.default.default_route_settings`에 `throttling_rate_limit=50`, `throttling_burst_limit=100`. HTTP API v2가 WAFv2 attach를 지원하지 않으므로 stage 전체 RPS 상한으로 보강.
+- **OIDC 권한** — github_oidc의 customer-managed policy allow list에 `wafv2:*` 추가 (CD가 WAF 리소스 관리 가능).
+- 문서 갱신: [DECISIONS D7](docs/DECISIONS.md#d7-waf-도입-시점) ✅, [VERIFICATION Phase 3b](docs/VERIFICATION.md#phase-3b--waf--api-throttling) 신규 섹션.
+
 ### 2026-05-25 (저녁) — Dependabot 메이저 PR 정리 + OIDC 권한 축소 + SNS 인증 confirm
 
 세션 후반 작업. 추천 후속 큐의 5건을 일괄 정리.

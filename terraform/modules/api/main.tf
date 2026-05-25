@@ -148,6 +148,13 @@ resource "aws_apigatewayv2_stage" "default" {
   api_id      = aws_apigatewayv2_api.api.id
   name        = "$default"
   auto_deploy = true
+
+  # Stage-level account-wide throttle. HTTP API v2 does not yet integrate
+  # with WAFv2, so this is the lightweight guard against runaway clients.
+  default_route_settings {
+    throttling_rate_limit  = var.throttling_rate_limit
+    throttling_burst_limit = var.throttling_burst_limit
+  }
 }
 
 resource "aws_lambda_permission" "apigw_invoke" {

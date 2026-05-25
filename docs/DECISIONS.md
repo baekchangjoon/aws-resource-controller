@@ -37,7 +37,7 @@ reading_order: 4
 | **D4** | SES 이메일 ID `changjoon.baek@gmail.com` | 유지 (Terraform이 import) | 본인 발송 E2E 테스트용 |
 | **D5** | Terraform 백엔드 | S3 + DynamoDB lock | 표준 패턴, 학습 가치 |
 | **D6** | SES Receipt Rule 활성화 | Terraform이 관리 | 코드/상태 일관성 |
-| **D7** | WAF 도입 시점 | Phase 3 보류 | 학습 우선순위 낮음, 비용 절감 |
+| **D7** | WAF 도입 시점 | ✅ **2026-05-25 도입** — CloudFront(web)에 WAFv2 attach + API GW HTTP API stage throttle. 자세한 내용은 [VERIFICATION Phase 3b](VERIFICATION.md#phase-3b--waf--api-throttling) | 보류 해제, 학습 가치 + 실제 보호 |
 | **D8** | SES Production 신청 | 보류 | 회신 기능은 MVP 범위 외 |
 | **D9** | dev/prod stage 분리 | `envs/dev`, `envs/prod` 두 환경 | E2E를 dev에서 안전 실행 |
 | **D10** | GitHub 저장소 공개 | public | 포트폴리오 노출 |

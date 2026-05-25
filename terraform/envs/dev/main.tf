@@ -101,6 +101,15 @@ module "observability" {
   monthly_budget_usd          = 10
 }
 
+module "waf" {
+  source = "../../modules/waf"
+  providers = {
+    aws.us_east_1 = aws.us_east_1
+  }
+
+  name_prefix = local.name_prefix
+}
+
 module "frontend" {
   source = "../../modules/frontend"
   providers = {
@@ -112,4 +121,5 @@ module "frontend" {
   domain_name    = var.domain_name
   web_fqdn       = local.web_fqdn
   hosted_zone_id = data.aws_route53_zone.primary.zone_id
+  web_acl_arn    = module.waf.web_acl_arn
 }

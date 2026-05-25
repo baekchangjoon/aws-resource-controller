@@ -25,3 +25,9 @@ variable "price_class" {
   type        = string
   default     = "PriceClass_100"
 }
+
+variable "web_acl_arn" {
+  description = "ARN of a CLOUDFRONT-scoped WAFv2 web ACL to attach. Leave null to disable WAF."
+  type        = string
+  default     = null
+}

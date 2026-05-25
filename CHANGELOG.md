@@ -4,7 +4,27 @@ All notable changes to TempSES are documented here. Format inspired by [Keep a C
 
 ## [Unreleased]
 
-### 2026-05-25 — 운영 안전망 강화 (5단계 추천 우선순위 완료)
+### 2026-05-25 (저녁) — Dependabot 메이저 PR 정리 + OIDC 권한 축소 + SNS 인증 confirm
+
+세션 후반 작업. 추천 후속 큐의 5건을 일괄 정리.
+
+1. **Dependabot 메이저 PR 3건 처리**
+   - [#17](https://github.com/baekchangjoon/aws-resource-controller/pull/17) `lambda/api` ruff `~0.9 → ~0.15` — 코드 변경 없이 CI green → squash merge.
+   - [#18](https://github.com/baekchangjoon/aws-resource-controller/pull/18) `web` React 18 → **React 19 메이저** — `JSX` namespace가 `React.JSX` 아래로 이동되어 `tsc`가 깨짐. `web/src/App.tsx`에 `import type { JSX } from "react"` 추가로 fix. 로컬 typecheck + vitest 5/5 + `vite build` 모두 PASS 확인 후 머지.
+   - [#19](https://github.com/baekchangjoon/aws-resource-controller/pull/19) `lambda/ingest` mypy 1.14 → **2.1 메이저** + pytest/pytest-cov/moto/boto3/ruff bump — 새 mypy가 `bleach` stub을 인식하면서 기존 `# type: ignore[import-untyped]`가 unused-ignore 에러로 잡힘. `lambda/ingest/src/handler.py`에서 주석 제거 fix 후 머지.
+
+2. **OIDC 배포 롤 권한 축소** — [#20](https://github.com/baekchangjoon/aws-resource-controller/pull/20)
+   - AWS-managed `AdministratorAccess` attachment 제거.
+   - customer-managed `tempses-dev-github-deploy` policy로 교체. allow list: `acm/apigateway/budgets/cloudfront/cloudwatch/dynamodb/iam/lambda/logs/route53/s3/ses/sns/sqs` + `sts:GetCallerIdentity` + `tag:GetResources`.
+   - 명시 deny: `account:*`, `organizations:*`, `iam:Create/Delete/UpdateUser`, `iam:Create/DeleteAccessKey`, `iam:*LoginProfile`, `iam:*UserPolicy`.
+   - 배포 검증: 머지 직후 CD ([Run 26389961140](https://github.com/baekchangjoon/aws-resource-controller/actions/runs/26389961140)) 성공으로 attachment 교체, 이어 dispatch CD ([Run 26390034718](https://github.com/baekchangjoon/aws-resource-controller/actions/runs/26390034718))가 **새 policy만으로** 다시 성공 → 권한 축소 안전.
+
+3. **SNS 알람 이메일 구독 정상화**
+   - 초기 `terraform apply -replace`로 만든 구독이 confirmation 직후 곧장 Unsubscribe로 풀리는 현상 재현 — Gmail 등 메일 클라이언트의 자동 link prefetch가 confirmation 메일의 `UnsubscribeURL`까지 따라가는 [잘 알려진 SNS 함정](https://docs.aws.amazon.com/sns/latest/dg/sns-email-notifications.html).
+   - 우회: 새 confirmation 메일의 `SubscribeURL`을 클릭 대신 복사해 받아, `aws sns confirm-subscription --token … --authenticate-on-unsubscribe true` 로 API confirm.
+   - 검증: `get-subscription-attributes` 결과 `PendingConfirmation=false`, **`ConfirmationWasAuthenticated=true`**. 이후 unsubscribe도 AWS 자격증명 인증을 요구하므로 prefetch에 더 이상 노출되지 않음. 테스트 publish 메일(MessageId `1f79a33b-be41-54f6-ae0f-c1b5b8e8869f`) 정상 수신 확인.
+
+
 
 추천 우선순위([§ 보류 항목 분석](docs/sessions/2026-05-25.md#6-의도적-보류--향후-작업)) 1~5번 일괄 완료.
 

@@ -1,6 +1,5 @@
 provider "aws" {
-  region  = var.region
-  profile = var.aws_profile
+  region = var.region
 
   default_tags {
     tags = {
@@ -13,9 +12,8 @@ provider "aws" {
 
 # us-east-1 provider — ACM for CloudFront must be issued in us-east-1
 provider "aws" {
-  alias   = "us_east_1"
-  region  = "us-east-1"
-  profile = var.aws_profile
+  alias  = "us_east_1"
+  region = "us-east-1"
 
   default_tags {
     tags = {

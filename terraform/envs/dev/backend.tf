@@ -5,6 +5,7 @@ terraform {
     region         = "ap-northeast-2"
     dynamodb_table = "tempses-tflock"
     encrypt        = true
-    profile        = "default"
+    # No profile here — AWS credentials come from the default chain
+    # (env vars in CI, named profile or SSO locally).
   }
 }

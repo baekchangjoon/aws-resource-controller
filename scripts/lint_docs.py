@@ -67,6 +67,14 @@ def _check_links(text: str, path: Path) -> list[str]:
             continue
         # Resolve relative to the file's directory.
         resolved = (path.parent / target).resolve()
+        # Reject paths that escape the repo root — they may exist on the
+        # author's machine but won't exist for anyone reading the repo on
+        # GitHub or in CI.
+        try:
+            resolved.relative_to(ROOT)
+        except ValueError:
+            errors.append(f"link escapes repo root: {target!r} → {resolved}")
+            continue
         if not resolved.exists():
             try:
                 rel = resolved.relative_to(ROOT)

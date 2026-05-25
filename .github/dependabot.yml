@@ -1,0 +1,96 @@
+# Dependabot — keep dependencies fresh with weekly PRs.
+# Docs: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates
+version: 2
+
+updates:
+  # GitHub Actions
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "01:00"
+      timezone: Asia/Seoul
+    open-pull-requests-limit: 5
+    groups:
+      actions-core:
+        applies-to: version-updates
+        patterns: ["actions/*"]
+      actions-third-party:
+        applies-to: version-updates
+        patterns: ["*"]
+        exclude-patterns: ["actions/*"]
+
+  # Lambda Ingest (Python)
+  - package-ecosystem: pip
+    directory: /lambda/ingest
+    schedule:
+      interval: weekly
+      day: monday
+      time: "01:00"
+      timezone: Asia/Seoul
+    open-pull-requests-limit: 5
+    groups:
+      lambda-ingest-runtime:
+        applies-to: version-updates
+        dependency-type: production
+      lambda-ingest-dev:
+        applies-to: version-updates
+        dependency-type: development
+
+  # Lambda API (Python)
+  - package-ecosystem: pip
+    directory: /lambda/api
+    schedule:
+      interval: weekly
+      day: monday
+      time: "01:00"
+      timezone: Asia/Seoul
+    open-pull-requests-limit: 5
+
+  # E2E tests (Python)
+  - package-ecosystem: pip
+    directory: /tests/e2e
+    schedule:
+      interval: weekly
+      day: monday
+      time: "01:00"
+      timezone: Asia/Seoul
+    open-pull-requests-limit: 3
+
+  # Web (npm)
+  - package-ecosystem: npm
+    directory: /web
+    schedule:
+      interval: weekly
+      day: monday
+      time: "01:00"
+      timezone: Asia/Seoul
+    open-pull-requests-limit: 5
+    groups:
+      web-runtime:
+        applies-to: version-updates
+        dependency-type: production
+      web-dev:
+        applies-to: version-updates
+        dependency-type: development
+
+  # Terraform — bootstrap
+  - package-ecosystem: terraform
+    directory: /terraform/bootstrap
+    schedule:
+      interval: weekly
+      day: monday
+      time: "01:00"
+      timezone: Asia/Seoul
+    open-pull-requests-limit: 3
+
+  # Terraform — envs/dev
+  - package-ecosystem: terraform
+    directory: /terraform/envs/dev
+    schedule:
+      interval: weekly
+      day: monday
+      time: "01:00"
+      timezone: Asia/Seoul
+    open-pull-requests-limit: 3

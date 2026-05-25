@@ -17,6 +17,12 @@ permissions:
   pull-requests: write   # gitleaks-action posts a comment on PRs when leaks are found
   security-events: write  # so we can also upload SARIF if we extend later
 
+env:
+  # Opt-in to Node.js 24 for actions still pinned to Node 20.
+  # Required before 2026-06-02 when Node 20 stops working on the runner.
+  # https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   scan:
     name: gitleaks

@@ -10,3 +10,11 @@ output "api_lambda_function_name" {
 output "api_lambda_role_arn" {
   value = aws_iam_role.api_lambda.arn
 }
+
+output "api_id" {
+  value = aws_apigatewayv2_api.api.id
+}
+
+output "api_stage_name" {
+  value = aws_apigatewayv2_stage.default.name
+}

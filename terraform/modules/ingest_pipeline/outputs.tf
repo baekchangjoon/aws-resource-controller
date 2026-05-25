@@ -14,6 +14,10 @@ output "dlq_url" {
   value = aws_sqs_queue.ingest_dlq.url
 }
 
+output "dlq_name" {
+  value = aws_sqs_queue.ingest_dlq.name
+}
+
 output "ingest_lambda_role_arn" {
   value = aws_iam_role.ingest_lambda.arn
 }

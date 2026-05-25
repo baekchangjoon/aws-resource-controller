@@ -89,6 +89,18 @@ module "github_oidc" {
   github_repo = "baekchangjoon/aws-resource-controller"
 }
 
+module "observability" {
+  source = "../../modules/observability"
+
+  name_prefix                 = local.name_prefix
+  notification_email          = "changjoon.baek@gmail.com"
+  ingest_lambda_function_name = module.ingest_pipeline.ingest_lambda_function_name
+  api_lambda_function_name    = module.api.api_lambda_function_name
+  dlq_name                    = module.ingest_pipeline.dlq_name
+  api_gateway_id              = module.api.api_id
+  monthly_budget_usd          = 10
+}
+
 module "frontend" {
   source = "../../modules/frontend"
   providers = {

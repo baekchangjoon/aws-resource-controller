@@ -61,3 +61,11 @@ output "web_url" {
 output "github_deploy_role_arn" {
   value = module.github_oidc.deploy_role_arn
 }
+
+output "alerts_topic_arn" {
+  value = module.observability.alerts_topic_arn
+}
+
+output "alarm_names" {
+  value = module.observability.alarm_names
+}

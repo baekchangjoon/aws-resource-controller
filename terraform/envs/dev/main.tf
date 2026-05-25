@@ -25,11 +25,15 @@ module "ddb" {
 module "ingest_pipeline" {
   source = "../../modules/ingest_pipeline"
 
-  name_prefix         = local.name_prefix
-  account_id          = local.account_id
-  region              = local.region
-  addresses_table_arn = module.ddb.addresses_table_arn
-  messages_table_arn  = module.ddb.messages_table_arn
+  name_prefix          = local.name_prefix
+  account_id           = local.account_id
+  region               = local.region
+  addresses_table_arn  = module.ddb.addresses_table_arn
+  addresses_table_name = module.ddb.addresses_table_name
+  messages_table_arn   = module.ddb.messages_table_arn
+  messages_table_name  = module.ddb.messages_table_name
+  lambda_zip_path      = "${path.root}/../../../lambda/ingest/dist/handler.zip"
+  message_ttl_seconds  = var.message_ttl_seconds
 }
 
 module "ses" {

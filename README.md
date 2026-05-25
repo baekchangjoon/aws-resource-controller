@@ -21,7 +21,7 @@
 | Terraform: route53_records 모듈 | ✅ |
 | Terraform: api 모듈 (HTTP API + Lambda 4종) | ⏳ |
 | Terraform: frontend 모듈 (S3 + CloudFront + ACM) | ⏳ |
-| Lambda Ingest 코드 (TDD) | ⏳ |
+| Lambda Ingest 코드 (TDD) | ✅ ([VERIFICATION §1.1](docs/VERIFICATION.md#phase-11--lambda-ingest-tdd)) |
 | Lambda API 핸들러 코드 (TDD) | ⏳ |
 | React 프론트엔드 | ⏳ |
 | E2E 테스트 | ⏳ |

@@ -4,6 +4,21 @@ All notable changes to TempSES are documented here. Format inspired by [Keep a C
 
 ## [Unreleased]
 
+### 2026-05-25 — Phase 1.1 완료 (Lambda Ingest TDD + E2E)
+
+- [`lambda/ingest/src/handler.py`](lambda/ingest/src/handler.py) — Python 3.13 Lambda
+  - SES verdict 게이트 (spam/virus FAIL drop)
+  - 활성 주소 화이트리스트 (`addresses` GetItem)
+  - MIME 파싱 + bleach HTML sanitize (D17)
+  - 첨부파일 S3 별도 저장 (`attachments/<message_id>/`)
+  - 결정적 `message_id` (S3 LastModified + S3 key SHA-256) → 재처리 idempotent
+  - DDB PutItem with `attribute_not_exists` 조건
+- 7개 단위 테스트 ([`tests/test_handler.py`](lambda/ingest/tests/test_handler.py)) PASS, moto 기반
+- 품질 게이트: ruff format/check, mypy --strict 모두 통과
+- [`build.sh`](lambda/ingest/build.sh) — manylinux2014 wheel로 zip 빌드 (Docker 없음)
+- Terraform `ingest_pipeline` 모듈 확장: Lambda function + CloudWatch Logs + S3 이벤트 통지 + Lambda permission + 비동기 OnFailure → DLQ
+- 스모크 테스트 + 실제 SES E2E 테스트 통과 ([VERIFICATION.md §1.1](docs/VERIFICATION.md))
+
 ### 2026-05-25 — Phase 0 완료, Phase 1 시작
 
 #### 문서화

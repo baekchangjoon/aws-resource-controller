@@ -34,3 +34,30 @@ variable "attachments_expire_days" {
   type        = number
   default     = 7
 }
+
+variable "addresses_table_name" {
+  description = "Name of the addresses DynamoDB table (for env var)"
+  type        = string
+}
+
+variable "messages_table_name" {
+  description = "Name of the messages DynamoDB table (for env var)"
+  type        = string
+}
+
+variable "lambda_zip_path" {
+  description = "Path to the built Lambda Ingest deploy zip"
+  type        = string
+}
+
+variable "message_ttl_seconds" {
+  description = "How long a stored message lives (passed to Lambda as env var)"
+  type        = number
+  default     = 7200
+}
+
+variable "log_retention_days" {
+  description = "CloudWatch Logs retention for the ingest Lambda"
+  type        = number
+  default     = 7
+}

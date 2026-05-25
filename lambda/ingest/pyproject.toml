@@ -1,0 +1,36 @@
+[project]
+name = "tempses-ingest"
+version = "0.1.0"
+description = "TempSES Lambda Ingest — parses incoming mail and writes to DynamoDB"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "UP",   # pyupgrade
+    "SIM",  # flake8-simplify
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+filterwarnings = [
+    "ignore::DeprecationWarning:botocore",
+]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+warn_unreachable = true
+ignore_missing_imports = true

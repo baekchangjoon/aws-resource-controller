@@ -157,3 +157,75 @@ resource "aws_iam_role_policy" "ingest_lambda" {
   role   = aws_iam_role.ingest_lambda.id
   policy = data.aws_iam_policy_document.ingest_lambda.json
 }
+
+######################################################################
+# Lambda function (built by lambda/ingest/build.sh into dist/handler.zip)
+######################################################################
+
+resource "aws_cloudwatch_log_group" "ingest" {
+  name              = "/aws/lambda/${var.name_prefix}-ingest"
+  retention_in_days = var.log_retention_days
+}
+
+resource "aws_lambda_function" "ingest" {
+  function_name    = "${var.name_prefix}-ingest"
+  role             = aws_iam_role.ingest_lambda.arn
+  handler          = "handler.lambda_handler"
+  runtime          = "python3.13"
+  architectures    = ["x86_64"]
+  timeout          = 60
+  memory_size      = 256
+  filename         = var.lambda_zip_path
+  source_code_hash = filebase64sha256(var.lambda_zip_path)
+
+  environment {
+    variables = {
+      MAIL_BUCKET         = aws_s3_bucket.mail.bucket
+      ADDRESSES_TABLE     = var.addresses_table_name
+      MESSAGES_TABLE      = var.messages_table_name
+      MESSAGE_TTL_SECONDS = tostring(var.message_ttl_seconds)
+    }
+  }
+
+  depends_on = [
+    aws_iam_role_policy.ingest_lambda,
+    aws_cloudwatch_log_group.ingest,
+  ]
+}
+
+# Route async-invocation failures to the DLQ.
+resource "aws_lambda_function_event_invoke_config" "ingest" {
+  function_name                = aws_lambda_function.ingest.function_name
+  maximum_event_age_in_seconds = 21600
+  maximum_retry_attempts       = 2
+
+  destination_config {
+    on_failure {
+      destination = aws_sqs_queue.ingest_dlq.arn
+    }
+  }
+}
+
+######################################################################
+# S3 → Lambda trigger
+######################################################################
+
+resource "aws_lambda_permission" "allow_s3" {
+  statement_id  = "AllowS3InvokeIngest"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.ingest.function_name
+  principal     = "s3.amazonaws.com"
+  source_arn    = aws_s3_bucket.mail.arn
+}
+
+resource "aws_s3_bucket_notification" "mail" {
+  bucket = aws_s3_bucket.mail.id
+
+  lambda_function {
+    lambda_function_arn = aws_lambda_function.ingest.arn
+    events              = ["s3:ObjectCreated:Put"]
+    filter_prefix       = "emails/"
+  }
+
+  depends_on = [aws_lambda_permission.allow_s3]
+}

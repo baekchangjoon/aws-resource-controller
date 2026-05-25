@@ -4,6 +4,17 @@ All notable changes to TempSES are documented here. Format inspired by [Keep a C
 
 ## [Unreleased]
 
+### 2026-05-25 — E2E 워크플로 + Playwright MCP 라이브 검증
+
+- [`.github/workflows/e2e.yml`](.github/workflows/e2e.yml): workflow_dispatch / PR label `run-e2e` / nightly 16:00 UTC
+  - OIDC 인증 → terraform init → Playwright Chromium 설치 → `test_browser_full_journey.py` 실행
+  - 실패 시 traces/screenshots 아티팩트 업로드
+  - **첫 실행** (Run #26382903554): PASS, 1m5s
+- Playwright MCP 인터랙티브 검증 ([docs/PROGRESS.md §5](docs/PROGRESS.md#5-라이브-검증-playwright-mcp-2026-05-25))
+  - 라이브 사이트 직접 조작 → SES 발송 → 인박스 도착 → iframe 보안 속성 + sanitize 결과 확인
+  - 스크린샷 4장 ([docs/screenshots/](docs/screenshots/))
+- [`docs/PROGRESS.md`](docs/PROGRESS.md): 전체 세션 진행 흐름 종합 보고서
+
 ### 2026-05-25 — Phase 3a 완료 (Playwright 브라우저 E2E)
 
 - [`tests/e2e/test_browser_full_journey.py`](tests/e2e/test_browser_full_journey.py): 헤드리스 Chromium으로 사용자 전체 시나리오 검증

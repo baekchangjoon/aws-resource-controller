@@ -1,0 +1,14 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - heading "TempSES" [level=1] [ref=e5]
+    - paragraph [ref=e6]: 일회용 이메일 — 새로고침 없이 자동 수신
+  - region "임시 주소" [ref=e7]:
+    - code [ref=e15]: ae87d3ad@dev-temp-mail.com
+    - button "주소 복사" [ref=e16] [cursor=pointer]: 복사
+    - button "새 주소 발급" [ref=e17] [cursor=pointer]: 새 주소
+  - main [ref=e9]:
+    - complementary "받은 편지함" [ref=e10]:
+      - heading "받은 편지함 (0)" [level=2] [ref=e30]
+      - paragraph [ref=e31]: 메일 대기 중…
+    - region "메일 본문" [ref=e13]:
+      - paragraph [ref=e32]: 왼쪽 목록에서 메일을 선택하세요.

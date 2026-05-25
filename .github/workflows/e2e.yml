@@ -1,0 +1,80 @@
+name: E2E
+
+# Runs the browser-driven end-to-end test against the deployed dev environment.
+#
+# Triggers:
+#   - Manual dispatch (recommended for ad-hoc checks).
+#   - PR with the `run-e2e` label (so we can opt-in per PR).
+#   - Nightly cron (24:00 UTC) to catch regressions while no one is pushing.
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [labeled]
+  schedule:
+    - cron: "0 16 * * *"  # 16:00 UTC ≈ 01:00 KST
+
+concurrency:
+  group: e2e-main
+  cancel-in-progress: false
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-2
+
+jobs:
+  browser-e2e:
+    name: Playwright browser E2E
+    # Skip label-triggered runs unless the label is exactly "run-e2e".
+    if: github.event_name != 'pull_request' || github.event.label.name == 'run-e2e'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.15.4"
+          terraform_wrapper: false
+
+      - name: terraform init (read outputs only)
+        working-directory: terraform/envs/dev
+        run: terraform init
+
+      - name: install Playwright + deps
+        working-directory: tests/e2e
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install --quiet --upgrade pip
+          .venv/bin/pip install --quiet -r requirements.txt
+          .venv/bin/playwright install --with-deps chromium
+
+      - name: run browser E2E
+        working-directory: tests/e2e
+        env:
+          TEMPSES_SENDER: changjoon.baek@gmail.com
+        run: .venv/bin/pytest test_browser_full_journey.py -v -s --tb=short
+
+      - name: upload Playwright traces & screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-output
+          path: |
+            tests/e2e/test-results/
+            tests/e2e/playwright-report/
+            tests/e2e/.playwright-mcp/
+          if-no-files-found: ignore

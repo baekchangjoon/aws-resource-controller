@@ -1,0 +1,18 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - heading "TempSES" [level=1] [ref=e5]
+    - paragraph [ref=e6]: 일회용 이메일 — 새로고침 없이 자동 수신
+  - region "임시 주소" [ref=e7]:
+    - code [ref=e15]: 77929b72@dev-temp-mail.com
+    - button "주소 복사" [ref=e16] [cursor=pointer]: 복사
+    - button "새 주소 발급" [ref=e17] [cursor=pointer]: 새 주소
+  - main [ref=e9]:
+    - complementary "받은 편지함" [ref=e10]:
+      - heading "받은 편지함 (1)" [level=2] [ref=e18]
+      - list [ref=e19]:
+        - listitem [ref=e20] [cursor=pointer]:
+          - generic [ref=e21]: changjoon.baek@gmail.com
+          - generic [ref=e22]: Playwright MCP live E2E
+          - generic [ref=e23]: 오후 01:13
+    - region "메일 본문" [ref=e13]:
+      - paragraph [ref=e14]: 왼쪽 목록에서 메일을 선택하세요.

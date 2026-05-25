@@ -61,6 +61,24 @@ module "route53_records" {
   dmarc_report_email = "changjoon.baek@gmail.com"
 }
 
+module "api" {
+  source = "../../modules/api"
+
+  name_prefix          = local.name_prefix
+  account_id           = local.account_id
+  region               = local.region
+  domain               = var.domain_name
+  lambda_zip_path      = "${path.root}/../../../lambda/api/dist/handler.zip"
+  addresses_table_arn  = module.ddb.addresses_table_arn
+  addresses_table_name = module.ddb.addresses_table_name
+  messages_table_arn   = module.ddb.messages_table_arn
+  messages_table_name  = module.ddb.messages_table_name
+  mail_bucket_arn      = module.ingest_pipeline.mail_bucket_arn
+  mail_bucket_name     = module.ingest_pipeline.mail_bucket_name
+  address_ttl_seconds  = var.message_ttl_seconds
+  # Phase 1: CORS allows only local dev. Phase 2 adds CloudFront domain.
+  cors_origins = ["http://localhost:5173"]
+}
+
 # Subsequent modules added as they are implemented:
-# module "api"      { ... }
 # module "frontend" { ... }

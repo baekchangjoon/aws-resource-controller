@@ -62,6 +62,13 @@
 
 → (a)로 진행.
 
+### D18. API Lambda 구조 — 단일 vs 분할
+DESIGN.md §5에 4개 Lambda를 명시했지만 실제 배포 시 운영 부담이 큼.
+- (a) **단일 Lambda + routeKey 라우터** (추천) — 콜드스타트 1회, IAM 1세트, 로그그룹 1개
+- (b) 엔드포인트별 4개 Lambda — 권한 최소화는 더 엄밀하지만 boilerplate ↑
+
+→ **(a)** 단일 Lambda. 권한 분리는 필요 시 향후 분할. DESIGN.md §5 갱신 예정.
+
 ### D17. HTML sanitize 라이브러리
 Lambda Ingest의 HTML 정제 라이브러리.
 - (a) `nh3` (Rust 기반 ammonia 바인딩) — 빠르고 활발히 유지되지만 Lambda 배포에 Docker 빌드 필요

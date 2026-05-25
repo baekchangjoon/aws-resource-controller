@@ -103,7 +103,58 @@ S3에 직접 합성 EML을 업로드 → Lambda 트리거 → DDB 기록 확인.
 
 ## Phase 1.2 — Lambda API 핸들러 (TDD)
 
-검증 예정.
+**검증 일시**: 2026-05-25
+**대상**: [`lambda/api/`](../lambda/api/), [`terraform/modules/api/`](../terraform/modules/api/), HTTP API `q3djghwoh7.execute-api.ap-northeast-2.amazonaws.com`
+
+### ✅ 단위 테스트
+
+[ROADMAP §1.2](ROADMAP.md#12-api-lambda) 시나리오 6개에 라우팅/CORS 보강 → 총 **12개 PASS**.
+
+| 테스트 | 결과 |
+|--------|------|
+| `test_create_address_returns_201` | PASS |
+| `test_create_address_retries_on_random_collision` | PASS |
+| `test_create_address_with_hint_collision_returns_409` | PASS |
+| `test_delete_address_returns_204` | PASS |
+| `test_delete_address_unknown_returns_404` | PASS |
+| `test_list_messages_empty` | PASS |
+| `test_list_messages_pagination_after_cursor` | PASS |
+| `test_list_messages_unknown_address_returns_404` | PASS |
+| `test_presign_attachment_returns_signed_url` | PASS |
+| `test_presign_unknown_message_returns_404` | PASS |
+| `test_unknown_route_returns_404` | PASS |
+| `test_cors_origin_header_present` | PASS |
+
+품질 게이트: `ruff format`, `ruff check`, `mypy --strict` 모두 통과.
+
+### ✅ 구조 결정 (D18)
+
+DESIGN.md §5의 4개 Lambda 분할을 **단일 Lambda + routeKey 라우터**로 변경. 이유: 콜드스타트 1회, IAM 1세트, 로그그룹 1개로 운영 단순화. [DECISIONS D18](DECISIONS.md#d18-api-lambda-구조--단일-vs-분할) 기록.
+
+### ✅ 배포 검증
+
+| 항목 | 기준 | 실제 |
+|------|------|------|
+| Lambda | `python3.13`, timeout 10s, memory 256MB | 일치 |
+| API Gateway | HTTP API v2.0 페이로드 | `aws_apigatewayv2_api.api`, `aws_apigatewayv2_integration` payload_format_version=2.0 |
+| 4개 라우트 | POST/DELETE/GET 명세대로 | for_each 매핑으로 일치 |
+| CORS | `http://localhost:5173` 허용 ([D2](DECISIONS.md#d2-cors-허용-origin)) | `cors_configuration.allow_origins = ["http://localhost:5173"]` |
+| IAM 최소 권한 | addresses GetItem/PutItem/DeleteItem, messages GetItem/Query, S3 GetObject on `attachments/*` | 일치 |
+| CloudWatch Logs 보존 | 7일 | 일치 |
+
+### ✅ 전체 API + Ingest E2E ([tests/e2e/e2e_api_full_loop.py](../tests/e2e/e2e_api_full_loop.py))
+
+1. `POST /addresses` → `94d31aaf@dev-temp-mail.com` 발급, 201
+2. `boto3 ses.send_email` → 발신 성공
+3. `GET /addresses/.../messages` (polling 90s) → 1 item with correct `from`/`subject`/`body_text`
+4. `DELETE /addresses/...` → 204
+5. `GET /addresses/.../messages` after delete → 404
+
+**ALL OK**
+
+### 결론
+
+**Phase 1.2 통과** ✅ — API가 설계대로 동작하며, 사용자 시나리오(주소 발급 → 메일 수신 → 조회 → 삭제) 전체가 정상.
 
 ---
 

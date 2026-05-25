@@ -4,6 +4,20 @@ All notable changes to TempSES are documented here. Format inspired by [Keep a C
 
 ## [Unreleased]
 
+### 2026-05-25 — Phase 1.2 완료 (Lambda API + HTTP API Gateway + E2E)
+
+- [`lambda/api/src/handler.py`](lambda/api/src/handler.py) — Python 3.13 단일 Lambda + routeKey 라우터 ([D18](docs/DECISIONS.md#d18))
+  - `POST /addresses` — 충돌 시 자동 재시도(랜덤) 또는 409(hint)
+  - `DELETE /addresses/{address}` — 204 or 404
+  - `GET /addresses/{address}/messages?after=&limit=` — `attribute_not_exists` 조건과 SK 페이지네이션
+  - `GET /messages/{addr}/{id}/attach/{aid}` — presigned URL 5분
+  - CORS 헤더 + JSON 응답 + Decimal serializer
+- 12개 단위 테스트 ([`tests/test_handler.py`](lambda/api/tests/test_handler.py)) PASS, moto 기반
+- 품질 게이트: ruff/mypy 모두 통과
+- [`build.sh`](lambda/api/build.sh) — 의존성 없는 단순 zip
+- Terraform [`modules/api/`](terraform/modules/api/): IAM 롤 + Lambda + CloudWatch Log Group + HTTP API + 4개 라우트(for_each) + CORS + Lambda permission
+- [`tests/e2e/e2e_api_full_loop.py`](tests/e2e/e2e_api_full_loop.py): POST → SES 발송 → polling → DELETE → 404 확인. **ALL OK**
+
 ### 2026-05-25 — Phase 1.1 완료 (Lambda Ingest TDD + E2E)
 
 - [`lambda/ingest/src/handler.py`](lambda/ingest/src/handler.py) — Python 3.13 Lambda

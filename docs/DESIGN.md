@@ -120,13 +120,12 @@
 
 ## 5. Lambda
 
+[DECISIONS.md D18](DECISIONS.md#d18-api-lambda-구조--단일-vs-분할) 결정에 따라 API는 단일 Lambda + routeKey 라우터 구조.
+
 | 함수 | 런타임 | Memory | Timeout | 트리거 |
 |------|--------|--------|---------|--------|
-| `tempses-ingest` | Python 3.13 | 256 MB | 60 s | S3 ObjectCreated:Put `emails/` |
-| `tempses-api-create-address` | Python 3.13 | 128 MB | 5 s | HTTP API POST `/addresses` |
-| `tempses-api-delete-address` | Python 3.13 | 128 MB | 5 s | HTTP API DELETE `/addresses/{addr}` |
-| `tempses-api-list-messages` | Python 3.13 | 128 MB | 5 s | HTTP API GET `/addresses/{addr}/messages` |
-| `tempses-api-presign-attachment` | Python 3.13 | 128 MB | 5 s | HTTP API GET `/messages/{addr}/{id}/attach/{aid}` |
+| `tempses-{env}-ingest` | Python 3.13 | 256 MB | 60 s | S3 ObjectCreated:Put `emails/` |
+| `tempses-{env}-api` | Python 3.13 | 256 MB | 10 s | HTTP API 4개 라우트(`POST /addresses`, `DELETE /addresses/{addr}`, `GET /addresses/{addr}/messages`, `GET /messages/{addr}/{id}/attach/{aid}`) |
 
 - 코드 패키지: 각 함수 디렉터리에서 의존성 포함 zip. `nh3`, `python-ulid` 같은 C/Rust 확장은 [Docker 빌드](https://docs.aws.amazon.com/lambda/latest/dg/python-image.html) 또는 [aws-lambda-builders](https://github.com/aws/aws-lambda-builders)로 manylinux 호환 빌드.
 - Lambda Layer는 사용하지 않음 (TF에서 단순화). 각 함수 zip에 의존성 포함.

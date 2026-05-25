@@ -34,4 +34,12 @@ output "web_fqdn" {
   value = local.web_fqdn
 }
 
-# api_endpoint, cloudfront_domain 등은 해당 모듈 구현 후 추가
+output "api_endpoint" {
+  value = module.api.api_endpoint
+}
+
+output "api_lambda_function_name" {
+  value = module.api.api_lambda_function_name
+}
+
+# cloudfront_domain 등은 해당 모듈 구현 후 추가

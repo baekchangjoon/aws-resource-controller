@@ -16,7 +16,7 @@ reading_order: 1
 ## 1. 프로젝트 배경
 
 - 사용자 `dev-temp-mail-user`가 2025-11-02 경 [temp-mail.io](https://temp-mail.io) 스타일의 일회용(disposable) 이메일 서비스를 AWS SES 기반으로 만들려 시작.
-- [기획서 원본](../../Downloads/aws_ses.html)에 사용자/개발 요구사항이 정리됨.
+- 기획서 원본(`~/Downloads/aws_ses.html`, 로컬 파일 — 저장소엔 포함되지 않음)에 사용자/개발 요구사항이 정리됨.
 - 인프라 일부(SES 수신, S3 저장, Lambda 트리거)는 콘솔로 만들었으나, 도메인 로직(파싱 후 저장/표시/API/UI)은 미구현 상태로 중단.
 - 학습/포트폴리오 목적이며, 운영 책임은 가벼움 — 그러나 **공개 도메인**이므로 스팸/악성 트래픽 대비는 필요.
 
@@ -58,7 +58,7 @@ reading_order: 1
 
 ## 3. HTML 기획서 타당성 평가
 
-원본: [aws_ses.html](../../Downloads/aws_ses.html)
+원본: `~/Downloads/aws_ses.html` (로컬 파일)
 
 ### 정합한 부분
 | 항목 | 평가 | 근거 |

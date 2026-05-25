@@ -41,17 +41,72 @@ data "aws_iam_policy_document" "assume" {
   }
 }
 
-# Deploy role: broad on this single-app account. For a shared account
-# this should be tightened (per-service policies).
 resource "aws_iam_role" "deploy" {
   name                 = "${var.name_prefix}-github-deploy"
   assume_role_policy   = data.aws_iam_policy_document.assume.json
   max_session_duration = 3600
 }
 
-# For a learning/personal account this is acceptable; for prod we would
-# replace with a per-service policy.
-resource "aws_iam_role_policy_attachment" "deploy_admin" {
+# Service-scoped deploy policy — every AWS service the Terraform stack and the
+# CD workflow actually touch is listed explicitly. Anything outside this set
+# (Organizations, billing, IAM user mgmt, KMS, EC2, RDS, ...) is implicitly
+# denied. The explicit deny block further blocks the most dangerous IAM and
+# account-level actions so a compromised workflow cannot pivot the account.
+data "aws_iam_policy_document" "deploy" {
+  statement {
+    sid    = "ServicesUsedByTempSES"
+    effect = "Allow"
+    actions = [
+      "acm:*",
+      "apigateway:*",
+      "budgets:*",
+      "cloudfront:*",
+      "cloudwatch:*",
+      "dynamodb:*",
+      "iam:*",
+      "lambda:*",
+      "logs:*",
+      "route53:*",
+      "s3:*",
+      "ses:*",
+      "sns:*",
+      "sqs:*",
+      "sts:GetCallerIdentity",
+      "tag:GetResources",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    sid    = "ProtectAccountAndIAMUsers"
+    effect = "Deny"
+    actions = [
+      "account:*",
+      "organizations:*",
+      "iam:CreateUser",
+      "iam:DeleteUser",
+      "iam:CreateAccessKey",
+      "iam:DeleteAccessKey",
+      "iam:CreateLoginProfile",
+      "iam:UpdateLoginProfile",
+      "iam:DeleteLoginProfile",
+      "iam:AttachUserPolicy",
+      "iam:DetachUserPolicy",
+      "iam:PutUserPolicy",
+      "iam:DeleteUserPolicy",
+      "iam:UpdateUser",
+    ]
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "deploy" {
+  name        = "${var.name_prefix}-github-deploy"
+  description = "Service-scoped permissions for the TempSES GitHub Actions deploy role"
+  policy      = data.aws_iam_policy_document.deploy.json
+}
+
+resource "aws_iam_role_policy_attachment" "deploy" {
   role       = aws_iam_role.deploy.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+  policy_arn = aws_iam_policy.deploy.arn
 }
